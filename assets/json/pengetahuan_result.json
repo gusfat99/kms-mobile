@@ -1,0 +1,412 @@
+{
+    "count": 1,
+    "links": {
+        "first": "http://_/api/v1/pengetahuan$page=1&$per_page=10&jenis_pengetahuan.id.$eq=2",
+        "last": "http://_/api/v1/pengetahuan$page=1&$per_page=10&jenis_pengetahuan.id.$eq=2",
+        "next": "",
+        "previous": ""
+    },
+    "page_context": {
+        "page": 1,
+        "per_page": 10,
+        "total_pages": 1
+    },
+    "results": [
+        {
+            "created_at": "2023-09-08T03:26:39.863Z",
+            "created_by": {
+                "id": null,
+                "username": null
+            },
+            "dampak": "dampak",
+            "dasar_hukum": null,
+            "data_digunakan": null,
+            "deleted_by": {
+                "id": null,
+                "username": null
+            },
+            "hipotesis": null,
+            "id": 17,
+            "jenis_pengetahuan": {
+                "id": 2,
+                "nama": "KIAT"
+            },
+            "judul": "INI JUDUL",
+            "jumlah_halaman": null,
+            "keahlian_dibutuhkan": null,
+            "kesimpulan_rekomendasi": null,
+            "latar_belakang": null,
+            "lesson_learned": null,
+            "lingkup_pengetahuan": {
+                "id": 1,
+                "nama": "Nama Lingkup Pengetahuan"
+            },
+            "masalah": "masalah",
+            "metode_pengawasan": null,
+            "pembahasan": null,
+            "penelitian_terdahulu": null,
+            "pengujian": null,
+            "penulis_1": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_2": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_3": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penyebab": "penyebab",
+            "proses_bisnis": null,
+            "ringkasan": "<h2 style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\"><strong>LOREM IPSUM</strong></h2>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula eu massa nec facilisis. Nunc sollicitudin quam at ornare mollis. Curabitur interdum facilisis ex sit amet sollicitudin. Sed id dictum ipsum, eu viverra sapien. Nullam suscipit nisi ut ipsum elementum, sit amet egestas sapien bibendum. Fusce eget enim porttitor, vulputate nibh in, aliquet massa. Maecenas gravida libero quis urna malesuada, ac hendrerit sem lacinia.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Donec at porta nulla. Nam ac massa vitae ex porttitor volutpat sit amet gravida nisl. Cras sed velit at urna aliquet cursus ac sit amet mauris. Mauris at purus eget arcu molestie luctus. Duis at imperdiet odio. Phasellus viverra eleifend diam, vitae pellentesque ligula scelerisque at. Donec condimentum tellus in vehicula lacinia. Fusce non diam augue. Vivamus laoreet tincidunt ante sit amet fermentum. Fusce vel malesuada nulla. Curabitur neque magna, facilisis et molestie et, dapibus at dui. Cras vulputate sem ac ligula auctor, eu auctor nibh posuere. Duis volutpat condimentum pretium.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Curabitur id ex massa. Nam dictum ante ac varius posuere. In hac habitasse platea dictumst. Praesent libero mi, laoreet a hendrerit sed, maximus ut urna. Fusce nec enim in diam mattis maximus. Suspendisse in finibus nulla. Donec scelerisque nisi mi, id dignissim libero finibus euismod. Phasellus nec elit vitae urna ultrices pretium. Sed rutrum nec metus ut tincidunt. In id mollis dolor, sagittis cursus sem. Maecenas sollicitudin augue massa, sed varius nunc malesuada et. Nam quis urna finibus, ultricies magna ac, dapibus mauris. Etiam ac sapien cursus, molestie nulla at, pulvinar urna. Fusce vitae risus mollis, suscipit urna eget, bibendum eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla enim justo, scelerisque et elit eu, dapibus consectetur odio.</p>",
+            "risiko_objek_pengawasan": null,
+            "rumusan_masalah": null,
+            "solusi": "solusi",
+            "statistik": {
+                "dislike": 0,
+                "komentar": 0,
+                "like": 0,
+                "view": 2
+            },
+            "status_pengetahuan": {
+                "id": 1,
+                "nama": "Status Pengetahuan"
+            },
+            "subjenis_pengetahuan": {
+                "id": 2,
+                "nama": "Nama Sub Jenis Pengetahuan"
+            },
+            "syarat_hasil": null,
+            "tahun_terbit": null,
+            "temuan_material": null,
+            "thumbnail": {
+                "id": 1,
+                "nama": "alus.jpg",
+                "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+            },
+            "tujuan": null,
+            "updated_at": "2023-09-08T03:26:39.863Z",
+            "updated_by": {
+                "id": null,
+                "username": null
+            }
+        },
+        {
+            "created_at": "2023-09-08T03:26:39.863Z",
+            "created_by": {
+                "id": null,
+                "username": null
+            },
+            "dampak": "dampak",
+            "dasar_hukum": null,
+            "data_digunakan": null,
+            "deleted_by": {
+                "id": null,
+                "username": null
+            },
+            "hipotesis": null,
+            "id": 17,
+            "jenis_pengetahuan": {
+                "id": 2,
+                "nama": "KIAT"
+            },
+            "judul": "INI JUDUL",
+            "jumlah_halaman": null,
+            "keahlian_dibutuhkan": null,
+            "kesimpulan_rekomendasi": null,
+            "latar_belakang": null,
+            "lesson_learned": null,
+            "lingkup_pengetahuan": {
+                "id": 1,
+                "nama": "Nama Lingkup Pengetahuan"
+            },
+            "masalah": "masalah",
+            "metode_pengawasan": null,
+            "pembahasan": null,
+            "penelitian_terdahulu": null,
+            "pengujian": null,
+            "penulis_1": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_2": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_3": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penyebab": "penyebab",
+            "proses_bisnis": null,
+            "ringkasan": "<h2 style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\"><strong>LOREM IPSUM</strong></h2>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula eu massa nec facilisis. Nunc sollicitudin quam at ornare mollis. Curabitur interdum facilisis ex sit amet sollicitudin. Sed id dictum ipsum, eu viverra sapien. Nullam suscipit nisi ut ipsum elementum, sit amet egestas sapien bibendum. Fusce eget enim porttitor, vulputate nibh in, aliquet massa. Maecenas gravida libero quis urna malesuada, ac hendrerit sem lacinia.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Donec at porta nulla. Nam ac massa vitae ex porttitor volutpat sit amet gravida nisl. Cras sed velit at urna aliquet cursus ac sit amet mauris. Mauris at purus eget arcu molestie luctus. Duis at imperdiet odio. Phasellus viverra eleifend diam, vitae pellentesque ligula scelerisque at. Donec condimentum tellus in vehicula lacinia. Fusce non diam augue. Vivamus laoreet tincidunt ante sit amet fermentum. Fusce vel malesuada nulla. Curabitur neque magna, facilisis et molestie et, dapibus at dui. Cras vulputate sem ac ligula auctor, eu auctor nibh posuere. Duis volutpat condimentum pretium.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Curabitur id ex massa. Nam dictum ante ac varius posuere. In hac habitasse platea dictumst. Praesent libero mi, laoreet a hendrerit sed, maximus ut urna. Fusce nec enim in diam mattis maximus. Suspendisse in finibus nulla. Donec scelerisque nisi mi, id dignissim libero finibus euismod. Phasellus nec elit vitae urna ultrices pretium. Sed rutrum nec metus ut tincidunt. In id mollis dolor, sagittis cursus sem. Maecenas sollicitudin augue massa, sed varius nunc malesuada et. Nam quis urna finibus, ultricies magna ac, dapibus mauris. Etiam ac sapien cursus, molestie nulla at, pulvinar urna. Fusce vitae risus mollis, suscipit urna eget, bibendum eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla enim justo, scelerisque et elit eu, dapibus consectetur odio.</p>",
+            "risiko_objek_pengawasan": null,
+            "rumusan_masalah": null,
+            "solusi": "solusi",
+            "statistik": {
+                "dislike": 0,
+                "komentar": 0,
+                "like": 0,
+                "view": 2
+            },
+            "status_pengetahuan": {
+                "id": 1,
+                "nama": "Status Pengetahuan"
+            },
+            "subjenis_pengetahuan": {
+                "id": 2,
+                "nama": "Nama Sub Jenis Pengetahuan"
+            },
+            "syarat_hasil": null,
+            "tahun_terbit": null,
+            "temuan_material": null,
+            "thumbnail": {
+                "id": 1,
+                "nama": "alus.jpg",
+                "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+            },
+            "tujuan": null,
+            "updated_at": "2023-09-08T03:26:39.863Z",
+            "updated_by": {
+                "id": null,
+                "username": null
+            }
+        },
+        {
+            "created_at": "2023-09-08T03:26:39.863Z",
+            "created_by": {
+                "id": null,
+                "username": null
+            },
+            "dampak": "dampak",
+            "dasar_hukum": null,
+            "data_digunakan": null,
+            "deleted_by": {
+                "id": null,
+                "username": null
+            },
+            "hipotesis": null,
+            "id": 17,
+            "jenis_pengetahuan": {
+                "id": 2,
+                "nama": "KIAT"
+            },
+            "judul": "INI JUDUL",
+            "jumlah_halaman": null,
+            "keahlian_dibutuhkan": null,
+            "kesimpulan_rekomendasi": null,
+            "latar_belakang": null,
+            "lesson_learned": null,
+            "lingkup_pengetahuan": {
+                "id": 1,
+                "nama": "Nama Lingkup Pengetahuan"
+            },
+            "masalah": "masalah",
+            "metode_pengawasan": null,
+            "pembahasan": null,
+            "penelitian_terdahulu": null,
+            "pengujian": null,
+            "penulis_1": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_2": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_3": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penyebab": "penyebab",
+            "proses_bisnis": null,
+            "ringkasan": "<h2 style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\"><strong>LOREM IPSUM</strong></h2>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula eu massa nec facilisis. Nunc sollicitudin quam at ornare mollis. Curabitur interdum facilisis ex sit amet sollicitudin. Sed id dictum ipsum, eu viverra sapien. Nullam suscipit nisi ut ipsum elementum, sit amet egestas sapien bibendum. Fusce eget enim porttitor, vulputate nibh in, aliquet massa. Maecenas gravida libero quis urna malesuada, ac hendrerit sem lacinia.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Donec at porta nulla. Nam ac massa vitae ex porttitor volutpat sit amet gravida nisl. Cras sed velit at urna aliquet cursus ac sit amet mauris. Mauris at purus eget arcu molestie luctus. Duis at imperdiet odio. Phasellus viverra eleifend diam, vitae pellentesque ligula scelerisque at. Donec condimentum tellus in vehicula lacinia. Fusce non diam augue. Vivamus laoreet tincidunt ante sit amet fermentum. Fusce vel malesuada nulla. Curabitur neque magna, facilisis et molestie et, dapibus at dui. Cras vulputate sem ac ligula auctor, eu auctor nibh posuere. Duis volutpat condimentum pretium.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Curabitur id ex massa. Nam dictum ante ac varius posuere. In hac habitasse platea dictumst. Praesent libero mi, laoreet a hendrerit sed, maximus ut urna. Fusce nec enim in diam mattis maximus. Suspendisse in finibus nulla. Donec scelerisque nisi mi, id dignissim libero finibus euismod. Phasellus nec elit vitae urna ultrices pretium. Sed rutrum nec metus ut tincidunt. In id mollis dolor, sagittis cursus sem. Maecenas sollicitudin augue massa, sed varius nunc malesuada et. Nam quis urna finibus, ultricies magna ac, dapibus mauris. Etiam ac sapien cursus, molestie nulla at, pulvinar urna. Fusce vitae risus mollis, suscipit urna eget, bibendum eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla enim justo, scelerisque et elit eu, dapibus consectetur odio.</p>",
+            "risiko_objek_pengawasan": null,
+            "rumusan_masalah": null,
+            "solusi": "solusi",
+            "statistik": {
+                "dislike": 0,
+                "komentar": 0,
+                "like": 0,
+                "view": 2
+            },
+            "status_pengetahuan": {
+                "id": 1,
+                "nama": "Status Pengetahuan"
+            },
+            "subjenis_pengetahuan": {
+                "id": 2,
+                "nama": "Nama Sub Jenis Pengetahuan"
+            },
+            "syarat_hasil": null,
+            "tahun_terbit": null,
+            "temuan_material": null,
+            "thumbnail": {
+                "id": 1,
+                "nama": "alus.jpg",
+                "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+            },
+            "tujuan": null,
+            "updated_at": "2023-09-08T03:26:39.863Z",
+            "updated_by": {
+                "id": null,
+                "username": null
+            }
+        },
+        {
+            "created_at": "2023-09-08T03:26:39.863Z",
+            "created_by": {
+                "id": null,
+                "username": null
+            },
+            "dampak": "dampak",
+            "dasar_hukum": null,
+            "data_digunakan": null,
+            "deleted_by": {
+                "id": null,
+                "username": null
+            },
+            "hipotesis": null,
+            "id": 17,
+            "jenis_pengetahuan": {
+                "id": 2,
+                "nama": "KIAT"
+            },
+            "judul": "INI JUDUL",
+            "jumlah_halaman": null,
+            "keahlian_dibutuhkan": null,
+            "kesimpulan_rekomendasi": null,
+            "latar_belakang": null,
+            "lesson_learned": null,
+            "lingkup_pengetahuan": {
+                "id": 1,
+                "nama": "Nama Lingkup Pengetahuan"
+            },
+            "masalah": "masalah",
+            "metode_pengawasan": null,
+            "pembahasan": null,
+            "penelitian_terdahulu": null,
+            "pengujian": null,
+            "penulis_1": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_2": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penulis_3": {
+                "foto": {
+                    "id": "1",
+                    "nama": "alus.jpg",
+                    "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+                },
+                "id": 1,
+                "jabatan": "string",
+                "nama": "Orang Default"
+            },
+            "penyebab": "penyebab",
+            "proses_bisnis": null,
+            "ringkasan": "<h2 style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\"><strong>LOREM IPSUM</strong></h2>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula eu massa nec facilisis. Nunc sollicitudin quam at ornare mollis. Curabitur interdum facilisis ex sit amet sollicitudin. Sed id dictum ipsum, eu viverra sapien. Nullam suscipit nisi ut ipsum elementum, sit amet egestas sapien bibendum. Fusce eget enim porttitor, vulputate nibh in, aliquet massa. Maecenas gravida libero quis urna malesuada, ac hendrerit sem lacinia.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Donec at porta nulla. Nam ac massa vitae ex porttitor volutpat sit amet gravida nisl. Cras sed velit at urna aliquet cursus ac sit amet mauris. Mauris at purus eget arcu molestie luctus. Duis at imperdiet odio. Phasellus viverra eleifend diam, vitae pellentesque ligula scelerisque at. Donec condimentum tellus in vehicula lacinia. Fusce non diam augue. Vivamus laoreet tincidunt ante sit amet fermentum. Fusce vel malesuada nulla. Curabitur neque magna, facilisis et molestie et, dapibus at dui. Cras vulputate sem ac ligula auctor, eu auctor nibh posuere. Duis volutpat condimentum pretium.</p>\n<p style=\"margin: 0px 0px 15px; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; background-color: #ffffff;\">Curabitur id ex massa. Nam dictum ante ac varius posuere. In hac habitasse platea dictumst. Praesent libero mi, laoreet a hendrerit sed, maximus ut urna. Fusce nec enim in diam mattis maximus. Suspendisse in finibus nulla. Donec scelerisque nisi mi, id dignissim libero finibus euismod. Phasellus nec elit vitae urna ultrices pretium. Sed rutrum nec metus ut tincidunt. In id mollis dolor, sagittis cursus sem. Maecenas sollicitudin augue massa, sed varius nunc malesuada et. Nam quis urna finibus, ultricies magna ac, dapibus mauris. Etiam ac sapien cursus, molestie nulla at, pulvinar urna. Fusce vitae risus mollis, suscipit urna eget, bibendum eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla enim justo, scelerisque et elit eu, dapibus consectetur odio.</p>",
+            "risiko_objek_pengawasan": null,
+            "rumusan_masalah": null,
+            "solusi": "solusi",
+            "statistik": {
+                "dislike": 0,
+                "komentar": 0,
+                "like": 0,
+                "view": 2
+            },
+            "status_pengetahuan": {
+                "id": 1,
+                "nama": "Status Pengetahuan"
+            },
+            "subjenis_pengetahuan": {
+                "id": 2,
+                "nama": "Nama Sub Jenis Pengetahuan"
+            },
+            "syarat_hasil": null,
+            "tahun_terbit": null,
+            "temuan_material": null,
+            "thumbnail": {
+                "id": 1,
+                "nama": "alus.jpg",
+                "url": "http://app.rampai.my.id/api/storages/alus.jpg"
+            },
+            "tujuan": null,
+            "updated_at": "2023-09-08T03:26:39.863Z",
+            "updated_by": {
+                "id": null,
+                "username": null
+            }
+        }
+    ]
+}

@@ -1,0 +1,162 @@
+[
+    {
+        "menu_route": "warga_route",
+        "menu_title": "Warga Mahaka",
+        "menu_background": "assets/images/menu_warga.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "tatib_route",
+        "menu_title": "Tata Tertib Lingkungan",
+        "menu_background": "assets/images/menu_tatib.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "pengurus_route",
+        "menu_title": "Pengurus RT 07/03",
+        "menu_background": "assets/images/menu_pengurus.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "ipl_route",
+        "menu_title": "Iuran Lingkungan",
+        "menu_background": "assets/images/menu_ipl.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "sampah_route",
+        "menu_title": "Layanan Sampah",
+        "menu_background": "assets/images/menu_sampah.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "lapor_route",
+        "menu_title": "Laporan Warga",
+        "menu_background": "assets/images/menu_laporan.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "aset_route",
+        "menu_title": "Aset Warga Mahaka",
+        "menu_background": "assets/images/menu_aset.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "pasar_route",
+        "menu_title": "Pasar Warga Mahaka",
+        "menu_background": "assets/images/menu_market.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "masjid_route",
+        "menu_title": "Masjid\nAr-Risalah",
+        "menu_background": "assets/images/menu_security.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "keamanan_route",
+        "menu_title": "Keamanan Lingkungan",
+        "menu_background": "assets/images/menu_security.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "kebersihan_route",
+        "menu_title": "Kebersihan Lingkungan",
+        "menu_background": "assets/images/menu_cleaning.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "olahraga_route",
+        "menu_title": "Kegiatan Olahraga",
+        "menu_background": "assets/images/menu_sport.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "motor_club_route",
+        "menu_title": "Mahaka Motor Club",
+        "menu_background": "assets/images/menu_sport.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "dokumentasi_route",
+        "menu_title": "Dokumentasi Kegiatan",
+        "menu_background": "assets/images/menu_sport.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "polling_route",
+        "menu_title": "Jajak Pendapat",
+        "menu_background": "assets/images/menu_sport.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    },
+    {
+        "menu_route": "layanan_depok_route",
+        "menu_title": "Layanan Kota Depok",
+        "menu_background": "assets/images/menu_layanan_depok.png",
+        "roles": [
+            "admin1",
+            "admin2",
+            "admin3"
+        ]
+    }
+]
