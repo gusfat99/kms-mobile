@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -9,6 +10,7 @@ import 'package:kms_bpkp_mobile/helpers/text_field_widget.dart';
 import 'package:kms_bpkp_mobile/helpers/widgets.dart';
 import 'package:kms_bpkp_mobile/models/api_cop_kategori.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
+import 'package:kms_bpkp_mobile/models/api_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/page_input_cop_model.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
 import 'package:kms_bpkp_mobile/screens/cop/api/cop_api.dart';
@@ -31,9 +33,11 @@ class _CopAddScreenState extends State<CopAddScreen> {
   List<Widget> documentWidgets2 = <Widget>[];
 
   List<CopKategoriResult> copKategoriResult = [];
+  List<JenisPengetahuanResult> jenisPengetahuanResult = [];
   List<String> copKategori = <String>[];
   List<HashTagResult> hashtagResult = [];
   List<String> hashtag = <String>[];
+  // DropdownMenuItem<JenisPengetahuanResult> jenisPengetahun = <JenisPengetahuanResult>[] as DropdownMenuItem<JenisPengetahuanResult>;
 
   List<File> document = <File>[];
 
@@ -49,6 +53,8 @@ class _CopAddScreenState extends State<CopAddScreen> {
 
   var _judul = "";
   var _kategori = "";
+  var _deskripsi = "";
+  int? _selectedJenisPengetahuan;
 
   int windexReferensi = 0;
   var referensiSelected = <String>[];
@@ -104,6 +110,99 @@ class _CopAddScreenState extends State<CopAddScreen> {
       fileDokumen.add("Pilih Dokumen");
       documentSelected.add(File(""));
     });
+  }
+
+  void handleSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      //_formKey.currentState!.save();
+      AppUtils.hideKeyboard(context);
+
+      //HASHTAG
+      // var hashtagSend = [];
+      // List<String> hashtag_send_api = [];
+      // for (int i = 0; i < hashtagWidgets.length; i++) {
+      //   var hasName = hastagSelected[i];
+      //   var hasId = 0;
+      //   for (var element in hashtagResult) {
+      //     if (element.nama == hasName) {
+      //       hasId = element.id;
+      //       hashtagSend.add({"id": hasId});
+      //     }
+      //   }
+      //   if (hasId == 0) {
+      //     hashtag_send_api.add(hasName);
+      //   }
+      // }
+      //DOCUMENT
+      List<File> document_send_api = [];
+      for (int i = 0; i <= documentWidgets2.length; i++) {
+        File docFile = documentSelected[i];
+        document_send_api.add(docFile);
+      }
+      //SEND TAG
+      // await InputPengetahuanService()
+      //     .submitNewHashTag(hashtag_send_api)
+      //     ?.then((value_ref) async {
+      //  setState(() {
+      //       for (int i = 0; i < value_ref.length; i++) {
+      //         hashtagSend.add({"id": value_ref[i]});
+      //       }
+      //     });
+
+      // }).catchError((e) {
+      //   toasty(context, "4 : $e");
+      // });
+
+      //NEXT
+      //SEND IMAGE
+      await InputPengetahuanService()
+          .submitNewKnowledgeAttachment(fileGambarSend)
+          ?.then((valueGambar) async {
+        setState(() {
+          fileGambarId = valueGambar[0].id;
+        });
+        //NEXT
+        //SEND DOC
+        InputPengetahuanService()
+            .submitNewKnowledgeAttachment(document_send_api)
+            ?.then((valueDokumen) {
+          setState(() {
+            for (int x = 0; x < valueDokumen.length; x++) {
+              fileDokumenId.add(valueDokumen[x].id);
+            }
+          });
+          //NEXT
+          //SUBMIT ALL
+          //SEND FORM
+          var docsSend = [];
+          for (int ii = 0; ii < fileDokumenId.length; ii++) {
+            docsSend.add({"id": fileDokumenId[ii]});
+          }
+
+          Map req = {
+            "topik": "Topik",
+            "kategori": _kategori.toLowerCase(),
+            "judul": _judul,
+            "deskripsi": _deskripsi,
+            "akademi_knowledge": {"id": _selectedJenisPengetahuan},
+            "gambar": {"id": fileGambarId},
+            "dokumen": docsSend[0],
+          };
+          CopService().submitNewCOP(req)?.then((valueSubmit) {
+            toasty(context, "SUCCESS!");
+            finish(context);
+          }).catchError((e) {
+            toasty(context, "7 : $e");
+          });
+        }).catchError((e) {
+          toasty(context, "6 : $e");
+        });
+      }).catchError((e) {
+        toasty(context, "5 : $e");
+      });
+    } else {
+      toasty(context, "1 : validate!!");
+    }
   }
 
   @override
@@ -175,6 +274,9 @@ class _CopAddScreenState extends State<CopAddScreen> {
           if (snapshot.data != null) {
             //SUB JENIS PENGETAHUAN
             copKategoriResult = snapshot.data!.copKategoriModel.results;
+            jenisPengetahuanResult =
+                snapshot.data!.jenisPengetahuanModel.results;
+
             copKategori.clear();
             copKategori.add("");
             for (var i = 0; i < copKategoriResult.length; i++) {
@@ -182,12 +284,12 @@ class _CopAddScreenState extends State<CopAddScreen> {
             }
 
             //HASHTAG
-            hashtag.clear();
-            hashtag.add("");
-            hashtagResult = snapshot.data!.hashTagModel.results;
-            for (var i = 0; i < hashtagResult.length; i++) {
-              hashtag.add(hashtagResult[i].nama);
-            }
+            // hashtag.clear();
+            // hashtag.add("");
+            // hashtagResult = snapshot.data!.hashTagModel.results;
+            // for (var i = 0; i < hashtagResult.length; i++) {
+            //   hashtag.add(hashtagResult[i].nama);
+            // }
 
             return Scaffold(
               appBar: buildAppBar(),
@@ -212,70 +314,108 @@ class _CopAddScreenState extends State<CopAddScreen> {
                           },
                         ),
                         15.height,
-                        text(
-                          "Kategori C.O.P",
-                          style: const TextStyle(fontSize: 16),
-                          textAlign: TextAlign.start,
-                        ),
+                        text("Kategori C.O.P",
+                            style: const TextStyle(fontSize: 16),
+                            textAlign: TextAlign.start,
+                            textColor: textColor),
                         5.height,
                         FastDropdown<String>(
                           name: 'dropdown',
                           items: copKategori,
                           initialValue: _kategori,
                           onChanged: (value) {
-                            _kategori = value!;
-                          },
-                        ),
-                        15.height,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: hashtagWidgets,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
                             setState(() {
-                              hashtagWidgets.add(_hashtag());
+                              _kategori = value!;
                             });
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent.withOpacity(0),
-                            side: const BorderSide(
-                              width: 0,
-                              color: Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.add_rounded,
-                                  color: Colors.blue, size: 20),
-                              6.width,
-                              text(
-                                "Tambah Hashtag",
-                                style: const TextStyle(color: Colors.blue),
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
                         ),
                         15.height,
                         text(
-                          "Ringkasan",
+                          "Akademi Knowledge",
+                          textColor: textColor,
+                          style: const TextStyle(fontSize: 16),
                           textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
                         ),
                         5.height,
+                        DropdownButtonFormField<int>(
+                          // name: 'dropdown',
+
+                          value: _selectedJenisPengetahuan,
+                          items: jenisPengetahuanResult
+                              .map<DropdownMenuItem<int>>(
+                                  (JenisPengetahuanResult value) {
+                            return DropdownMenuItem<int>(
+                              value: value.id,
+                              child: text(
+                                value.nama,
+                                textColor: textColor,
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.start,
+                              ),
+                            );
+                          }).toList(),
+                          // initialValue: ,
+                          onChanged: (int? value) {
+                            setState(() {
+                              _selectedJenisPengetahuan = value!;
+                            });
+                            // _kategori = value!;
+                          },
+                        ),
+
+                        // Column(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: hashtagWidgets,
+                        // ),
+                        // ElevatedButton(
+                        //   onPressed: () {
+                        //     setState(() {
+                        //       hashtagWidgets.add(_hashtag());
+                        //     });
+                        //   },
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: Colors.transparent,
+                        //     shadowColor: Colors.transparent.withOpacity(0),
+                        //     side: const BorderSide(
+                        //       width: 0,
+                        //       color: Colors.transparent,
+                        //     ),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //     ),
+                        //   ),
+                        //   child: Row(
+                        //     children: [
+                        //       const Icon(Icons.add_rounded,
+                        //           color: Colors.blue, size: 20),
+                        //       6.width,
+                        //       text(
+                        //         "Tambah Hashtag",
+                        //         style: const TextStyle(color: Colors.blue),
+                        //         textAlign: TextAlign.start,
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        15.height,
+                        TextFieldWidget(
+                          label: "Deskripsi",
+                          text: _judul,
+                          maxLines: 4,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _deskripsi = value;
+                            });
+                          },
+                        ),
+
                         // _quillToolbar(_ringkasanController),
                         // _quillEditor(_ringkasanController),
                         15.height,
                         text(
-                          "UPLOAD DOKUMEN",
+                          "Upload Dokumen",
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.start,
@@ -284,6 +424,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
                         15.height,
                         text(
                           "File Gambar *",
+                          textColor: textColor,
                           style: const TextStyle(fontSize: 16),
                           textAlign: TextAlign.start,
                         ),
@@ -326,6 +467,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
                               6.width,
                               text(
                                 fileGambar,
+                                textColor: whiteColor,
                                 style: const TextStyle(color: Colors.white),
                                 textAlign: TextAlign.start,
                               ).expand(),
@@ -335,7 +477,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
                         5.height,
                         text(
                           "* Max 1Mb, Format .jpg/.png",
-                          style: const TextStyle(),
+                          style: const TextStyle(fontSize: 12.0),
                           textAlign: TextAlign.start,
                         ),
                         15.height,
@@ -351,59 +493,59 @@ class _CopAddScreenState extends State<CopAddScreen> {
                           style: const TextStyle(),
                           textAlign: TextAlign.start,
                         ),
-                        if (windexDocument < 4)
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _addDoc();
-                                switch (windexDocument) {
-                                  case 0:
-                                    print("0");
-                                    documentWidgets2.add(document0());
-                                    break;
-                                  case 1:
-                                    print("1");
-                                    documentWidgets2.add(document1());
-                                    break;
-                                  case 2:
-                                    print("2");
-                                    documentWidgets2.add(document2());
-                                    break;
-                                  case 3:
-                                    print("3");
-                                    documentWidgets2.add(document3());
-                                    break;
-                                  case 4:
-                                    print("4");
-                                    documentWidgets2.add(document4());
-                                    break;
-                                }
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent.withOpacity(0),
-                              side: const BorderSide(
-                                width: 0,
-                                color: Colors.transparent,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.add_rounded,
-                                    color: Colors.blue, size: 20),
-                                6.width,
-                                text(
-                                  "Tambah Dokumen",
-                                  style: const TextStyle(color: Colors.blue),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ],
-                            ),
-                          ),
+                        // if (windexDocument < 4)
+                        //   ElevatedButton(
+                        //     onPressed: () {
+                        //       setState(() {
+                        //         _addDoc();
+                        //         switch (windexDocument) {
+                        //           case 0:
+                        //             print("0");
+                        //             documentWidgets2.add(document0());
+                        //             break;
+                        //           case 1:
+                        //             print("1");
+                        //             documentWidgets2.add(document1());
+                        //             break;
+                        //           case 2:
+                        //             print("2");
+                        //             documentWidgets2.add(document2());
+                        //             break;
+                        //           case 3:
+                        //             print("3");
+                        //             documentWidgets2.add(document3());
+                        //             break;
+                        //           case 4:
+                        //             print("4");
+                        //             documentWidgets2.add(document4());
+                        //             break;
+                        //         }
+                        //       });
+                        //     },
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: Colors.transparent,
+                        //       shadowColor: Colors.transparent.withOpacity(0),
+                        //       side: const BorderSide(
+                        //         width: 0,
+                        //         color: Colors.transparent,
+                        //       ),
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(8),
+                        //       ),
+                        //     ),
+                        //     child: Row(
+                        //       children: [
+                        //         const Icon(Icons.add_rounded,
+                        //             color: Colors.blue, size: 20),
+                        //         6.width,
+                        //         text(
+                        //           "Tambah Dokumen",
+                        //           style: const TextStyle(color: Colors.blue),
+                        //           textAlign: TextAlign.start,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
                         15.height,
                         ElevatedButton(
                           onPressed: () async {
@@ -418,104 +560,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
                             // );
                             // String ringkasan = ringkasanConverter.convert();
 
-                            if (_formKey.currentState!.validate()) {
-                              //_formKey.currentState!.save();
-                              AppUtils.hideKeyboard(context);
-
-                              //HASHTAG
-                              var hashtagSend = [];
-                              List<String> hashtag_send_api = [];
-                              for (int i = 0; i < hashtagWidgets.length; i++) {
-                                var hasName = hastagSelected[i];
-                                var hasId = 0;
-                                for (var element in hashtagResult) {
-                                  if (element.nama == hasName) {
-                                    hasId = element.id;
-                                    hashtagSend.add({"id": hasId});
-                                  }
-                                }
-                                if (hasId == 0) {
-                                  hashtag_send_api.add(hasName);
-                                }
-                              }
-                              //DOCUMENT
-                              List<File> document_send_api = [];
-                              for (int i = 0;
-                                  i <= documentWidgets2.length;
-                                  i++) {
-                                File docFile = documentSelected[i];
-                                document_send_api.add(docFile);
-                              }
-                              //SEND TAG
-                              await InputPengetahuanService()
-                                  .submitNewHashTag(hashtag_send_api)
-                                  ?.then((value_ref) async {
-                                setState(() {
-                                  for (int i = 0; i < value_ref.length; i++) {
-                                    hashtagSend.add({"id": value_ref[i]});
-                                  }
-                                });
-                                //NEXT
-                                //SEND IMAGE
-                                await InputPengetahuanService()
-                                    .submitNewKnowledgeAttachment(
-                                        fileGambarSend)
-                                    ?.then((valueGambar) async {
-                                  setState(() {
-                                    fileGambarId = valueGambar[0].id;
-                                  });
-                                  //NEXT
-                                  //SEND DOC
-                                  InputPengetahuanService()
-                                      .submitNewKnowledgeAttachment(
-                                          document_send_api)
-                                      ?.then((valueDokumen) {
-                                    setState(() {
-                                      for (int x = 0;
-                                          x < valueDokumen.length;
-                                          x++) {
-                                        fileDokumenId.add(valueDokumen[x].id);
-                                      }
-                                    });
-                                    //NEXT
-                                    //SUBMIT ALL
-                                    //SEND FORM
-                                    var docsSend = [];
-                                    for (int ii = 0;
-                                        ii < fileDokumenId.length;
-                                        ii++) {
-                                      docsSend.add({"id": fileDokumenId[ii]});
-                                    }
-
-                                    Map req = {
-                                      "topik": "Topik",
-                                      "kategori": _kategori.toLowerCase(),
-                                      "judul": _judul,
-                                      // "deskripsi": ringkasan,
-                                      "tag": hashtagSend,
-                                      "gambar": {"id": fileGambarId},
-                                      "dokumen": docsSend,
-                                    };
-                                    CopService()
-                                        .submitNewCOP(req)
-                                        ?.then((valueSubmit) {
-                                      toasty(context, "SUCCESS!");
-                                      finish(context);
-                                    }).catchError((e) {
-                                      toasty(context, "7 : $e");
-                                    });
-                                  }).catchError((e) {
-                                    toasty(context, "6 : $e");
-                                  });
-                                }).catchError((e) {
-                                  toasty(context, "5 : $e");
-                                });
-                              }).catchError((e) {
-                                toasty(context, "4 : $e");
-                              });
-                            } else {
-                              toasty(context, "1 : validate!!");
-                            }
+                            handleSubmit();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
@@ -591,6 +636,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
                 alignment: Alignment.bottomLeft,
                 child: text(
                   "Forum COP",
+                  textColor: whiteColor,
                   style: TextStyle(
                     fontSize: getProportionateScreenWidth(16),
                     color: whiteColor,

@@ -6,7 +6,8 @@ import 'package:kms_bpkp_mobile/apis/response.dart';
 import 'package:kms_bpkp_mobile/apis/services.dart';
 import 'package:kms_bpkp_mobile/models/api_cop_kategori.dart';
 import 'package:kms_bpkp_mobile/models/api_cop_model.dart';
-import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
+// import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
+import 'package:kms_bpkp_mobile/models/api_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_token_model.dart';
 import 'package:kms_bpkp_mobile/models/page_cop_model.dart';
 import 'package:kms_bpkp_mobile/models/page_input_cop_model.dart';
@@ -23,15 +24,17 @@ class CopService implements CopApiService {
 
     final String response = await rootBundle.loadString(copKategoriEpJson);
     final copKategori = await jsonDecode(response);
-    print(copKategori);
+  
     //HASHTAG
-    var resultHashTag =
-        await handleResponse(await getRequest(hashtagEp, apiParam, token!));
-    print("resultHashTag");
+    
+    var resultJenisPengetahuan = await handleResponse(
+        await getRequest(pengetahuanJenisEp, apiParam, token!));
 
     PageInputCopModel inputCopData = PageInputCopModel(
         copKategoriModel: CopKategoriModel.fromJson(copKategori),
-        hashTagModel: HashTagModel.fromJson(resultHashTag));
+        // hashTagModel: HashTagModel.fromJson({}),
+        jenisPengetahuanModel:
+            JenisPengetahuanModel.fromJson(resultJenisPengetahuan));
 
     return inputCopData;
   }
