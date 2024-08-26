@@ -34,6 +34,7 @@ String pengetahuanSubmitHashTag = "${appBaseUrl}api/v1/tag";
 String pengetahuanSubmitAttachment = "${appBaseUrl}api/v1/attachments";
 String pengetahuanSubmit = "${appBaseUrl}api/v1/pengetahuan";
 String copSubmit = "${appBaseUrl}api/v1/forum";
+String lingkupPengetahuanEp = "${appBaseUrl}api/v1/lingkup_pengetahuan";
 
 //==> Json Dummy
 // String loginEpJson = "assets/json/token_result.json";
@@ -144,4 +145,6 @@ class InputPengetahuanApiService {
   Future<Object>? submitNewKnowledge(Map pParam) {
     return null;
   }
+
+
 }

@@ -115,7 +115,7 @@ class PedomanResult {
     factory PedomanResult.fromJson(Map<String, dynamic> json) => PedomanResult(
         createdAt: json["created_at"],
         createdBy: TedBy.fromJson(json["created_by"]),
-        data: json["data"],
+        data: json["data"] ?? "",
         deletedBy: TedBy.fromJson(json["deleted_by"]),
         id: json["id"],
         nama: json["nama"],

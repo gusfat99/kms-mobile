@@ -116,7 +116,6 @@ class _CopAddScreenState extends State<CopAddScreen> {
     if (_formKey.currentState!.validate()) {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
-
       //HASHTAG
       // var hashtagSend = [];
       // List<String> hashtag_send_api = [];
@@ -323,7 +322,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
                           name: 'dropdown',
                           items: copKategori,
                           initialValue: _kategori,
-                          onChanged: (value) {
+                          onChanged: (value) { 
                             setState(() {
                               _kategori = value!;
                             });
@@ -410,9 +409,6 @@ class _CopAddScreenState extends State<CopAddScreen> {
                             });
                           },
                         ),
-
-                        // _quillToolbar(_ringkasanController),
-                        // _quillEditor(_ringkasanController),
                         15.height,
                         text(
                           "Upload Dokumen",
@@ -477,20 +473,22 @@ class _CopAddScreenState extends State<CopAddScreen> {
                         5.height,
                         text(
                           "* Max 1Mb, Format .jpg/.png",
-                          style: const TextStyle(fontSize: 12.0),
+                          fontSize: 12.0,
                           textAlign: TextAlign.start,
                         ),
                         15.height,
                         text(
                           "File Dokumen *",
-                          style: const TextStyle(fontSize: 16),
+                          fontSize: 16.0,
                           textAlign: TextAlign.start,
+                         
                         ),
                         childdd(),
                         5.height,
                         text(
                           "* Max 1Mb, Format .jpg/.png/.pdf",
-                          style: const TextStyle(),
+                          fontSize: 12.0,
+                          style: const TextStyle(fontSize: 12.0),
                           textAlign: TextAlign.start,
                         ),
                         // if (windexDocument < 4)
@@ -563,12 +561,12 @@ class _CopAddScreenState extends State<CopAddScreen> {
                             handleSubmit();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
-                            side: const BorderSide(
-                              width: 1,
-                              color: Colors.green,
-                            ),
+                            // side: const BorderSide(
+                            //   width: 1,
+                            //   color: Colors.green,
+                            // ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -583,7 +581,8 @@ class _CopAddScreenState extends State<CopAddScreen> {
                                 6.width,
                                 text(
                                   "SIMPAN",
-                                  style: const TextStyle(color: whiteColor),
+                                  textColor: whiteColor,
+                                  style: const TextStyle(color: Colors.white),
                                   textAlign: TextAlign.start,
                                 ),
                               ],
@@ -738,7 +737,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
               6.width,
               text(
                 fileDokumen[windexDocument],
-                style: const TextStyle(color: Colors.white),
+                textColor: whiteColor,
                 textAlign: TextAlign.start,
               ).expand()
             ],

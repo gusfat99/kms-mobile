@@ -4,11 +4,13 @@ import 'package:kms_bpkp_mobile/apis/request.dart';
 import 'package:kms_bpkp_mobile/apis/response.dart';
 import 'package:kms_bpkp_mobile/apis/services.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
+import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_new_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_new_tag_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pedoman_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penerbit_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pengarang_model%20.dart';
+import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
@@ -23,6 +25,7 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     Map<String, String> apiParam = {};
+    Map<String, String> apiParamPengetahuan = {};
     //SUB JENIS PENGETAHUAN
     var resultSubJenisPengetahuan = await handleResponse(
         await getRequest(pengetahuanSubJenisEp, apiParam, token!));
@@ -30,6 +33,8 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     //REFERENSI
     var resultReferensi =
         await handleResponse(await getRequest(referensiEp, apiParam, token));
+    var pengetahaun = await handleResponse(
+        await getRequest(pengetahuanEp, apiParamPengetahuan, token));
     print("resultReferensi");
     //TENAGA AHLI
     var resultTenagaAhli =
@@ -55,6 +60,9 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     var resultHashTag =
         await handleResponse(await getRequest(hashtagEp, apiParam, token));
     print("resultHashTag");
+    var resultLingkupPengetahuan = await handleResponse(
+        await getRequest(lingkupPengetahuanEp, apiParam, token));
+    print("resultLingkupPengetahuan");
 
     PageInputPengetahuanModel inputPengetahuanData = PageInputPengetahuanModel(
         subJenisPengetahuanModel:
@@ -65,6 +73,8 @@ class InputPengetahuanService implements InputPengetahuanApiService {
         penulisModel: PenulisModel.fromJson(resultPenulis),
         pengarangModel: PengarangModel.fromJson(resultPengarang),
         penerbitModel: PenerbitModel.fromJson(resultPenerbit),
+        lingkupPengetahuanModel:
+            LingkupPengetahuanModel.fromJson(resultLingkupPengetahuan),
         hashTagModel: HashTagModel.fromJson(resultHashTag));
 
     return inputPengetahuanData;
@@ -93,13 +103,13 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     final String? token = prefs.getString('token');
 
     List<int> resultApi = [];
-    // penulis_send_api.forEach((element) async {
-    //   Map<String, String> apiParam = {"nama": element};
-    //   var resultPost = await handleResponse(
-    //       await postRequest(pengetahuanSubmitReferensi, apiParam, token!));
-    //   NewReferensiModel resultPostRef = NewReferensiModel.fromJson(resultPost);
-    //   resultApi.add(resultPostRef.id);
-    // });
+    penulis_send_api.forEach((element) async {
+      Map<String, String> apiParam = {"nama_lengkap": element};
+      var resultPost = await handleResponse(
+          await postRequest(tenagaAhliEp, apiParam, token!));
+      NewReferensiModel resultPostRef = NewReferensiModel.fromJson(resultPost);
+      resultApi.add(resultPostRef.id);
+    });
     return resultApi;
   }
 
@@ -144,6 +154,18 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     final String? token = prefs.getString('token');
     var submitResult = await handleResponse(
         await postRequest(pengetahuanSubmit, pParam, token!));
+
     return submitResult;
+  }
+
+  Future<PengetahuanModel> getPengetahuan(Map<String, String> params) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+    var resultSubJenisPengetahuan = await handleResponse(
+        await getRequest(pengetahuanSubJenisEp, params, token!));
+
+    PengetahuanModel pengetahuanResult =
+        PengetahuanModel.fromJson(resultSubJenisPengetahuan);
+    return pengetahuanResult;
   }
 }

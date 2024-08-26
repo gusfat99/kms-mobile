@@ -1,5 +1,4 @@
 // ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, non_constant_identifier_names
-
 import 'package:flutter/material.dart';
 import 'package:kms_bpkp_mobile/colors.dart';
 import 'package:kms_bpkp_mobile/helpers/widgets.dart';
@@ -55,8 +54,11 @@ class _BerbagiScreenState extends State<BerbagiScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               pengetahuan = snapshot.data!.jenisPengetahuanModel.results;
-              subpengetahuan = snapshot.data!.subJenisPengetahuanModel.results;
+              subpengetahuan =
+                  snapshot.data!.subJenisPengetahuanModel.results.toList();
+              subpengetahuan.sort((a, b) => (b.id).compareTo(a.id));
               subJenisList.clear();
+
               for (int i = 0; i < subpengetahuan.length; i++) {
                 subJenisList.add(
                   Container(
@@ -87,12 +89,14 @@ class _BerbagiScreenState extends State<BerbagiScreen> {
                         //     .launch(context);
                         break;
                       case "2": //KIAT
-                        // KiatScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
+
+                        KiatScreen(
+                                title: _jenis_pengetahuan,
+                                id_jenis: id_jenis,
+                                sub_jenis_pengethuan: subpengetahuan[i].nama,
+                                id_sub_jenis_pengetahuan: subpengetahuan[i].id)
+                            .launch(context);
+
                         break;
                       case "3": //Kapitalisasi / Analytic Today
                         // KapitalisasiScreen(

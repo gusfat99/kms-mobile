@@ -132,16 +132,16 @@ class TenagaAhliResult {
         deletedBy: json["deleted_by"],
         email: json["email"] ?? "",
         foto: Foto.fromJson(json["foto"]),
-        id: json["id"],
-        jabatan: json["jabatan"],
-        namaLengkap: json["nama_lengkap"],
+        id: json["id"] ?? "",
+        jabatan: json["jabatan"] ?? "",
+        namaLengkap: json["nama_lengkap"] ?? "",
         namaPanggilan: json["nama_panggilan"] ?? "",
-        nip: json["nip"],
-        statusLevel: json["status_level"],
-        unitKerja: json["unit_kerja"],
+        nip: json["nip"] ?? "",
+        statusLevel: json["status_level"] ?? "",
+        unitKerja: json["unit_kerja"] ?? "",
         updatedAt: json["updated_at"] ?? "",
-        updatedBy: json["updated_by"],
-        userLevel: json["user_level"],
+        updatedBy: json["updated_by"] ?? "",
+        userLevel: json["user_level"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -164,7 +164,7 @@ class TenagaAhliResult {
 }
 
 class Foto {
-  String id;
+  dynamic id;
   String nama;
   String url;
 

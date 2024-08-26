@@ -9,7 +9,9 @@ import 'package:kms_bpkp_mobile/colors.dart';
 import 'package:kms_bpkp_mobile/helpers/loading_screen.dart';
 import 'package:kms_bpkp_mobile/helpers/text_field_widget.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
+import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
+import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/page_input_pengetahuan_model.dart';
@@ -17,6 +19,7 @@ import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
 import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:kms_bpkp_mobile/utils.dart';
+import 'package:kms_bpkp_mobile/wigets/upload_button_widget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class KiatScreen extends StatefulWidget {
@@ -49,11 +52,13 @@ class _KiatScreenState extends State<KiatScreen> {
   List<String> penulis = <String>[];
   List<String> hashtag = <String>[];
   List<File> document = <File>[];
+  List<LingkupPengetahuanResult> lingkupPengetahuanResult = [];
 
   String file_gambar = "Pilih Gambar";
   List<String> file_dokumen = [];
 
   List<File> file_gambar_send = [];
+  List<File> file_docs_send = [];
 
   int file_gambar_id = 0;
   List<int> file_dokumen_id = [];
@@ -66,107 +71,19 @@ class _KiatScreenState extends State<KiatScreen> {
   // final QuillController _syarat_controller = QuillController.basic();
 
   var _judul = "";
-
-  int windex_referensi = 0;
-  var referensiSelected = <String>[];
-  Widget _referensi() {
-    setState(() {
-      windex_referensi++;
-      referensiSelected.add("");
-    });
-    return Column(
-      children: [
-        15.height,
-        FastAutocomplete<String>(
-          name: 'referensi',
-          labelText: 'Referensi',
-          options: referensi,
-          initialValue:
-              TextEditingValue(text: referensiSelected[windex_referensi - 1]),
-          onChanged: (value) {
-            setState(() {
-              referensiSelected[windex_referensi - 1] = value!;
-            });
-          },
-          onSelected: (option) {
-            setState(() {
-              referensiSelected[windex_referensi - 1] = option;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  int windex_penulias = 0;
-  var penulisSelected = <String>[];
-  Widget _penulis() {
-    setState(() {
-      windex_penulias++;
-      penulisSelected.add("");
-    });
-    return Column(
-      children: [
-        15.height,
-        FastAutocomplete<String>(
-          name: 'penulis',
-          labelText: 'Penulis',
-          options: penulis,
-          initialValue:
-              TextEditingValue(text: penulisSelected[windex_penulias - 1]),
-          onChanged: (value) {
-            setState(() {
-              penulisSelected[windex_penulias - 1] = value!;
-            });
-          },
-          onSelected: (option) {
-            setState(() {
-              penulisSelected[windex_penulias - 1] = option;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  int windex_hastag = 0;
-  var hastagSelected = <String>[];
-  Widget _hashtag() {
-    setState(() {
-      windex_hastag++;
-      hastagSelected.add("");
-    });
-    return Column(
-      children: [
-        15.height,
-        FastAutocomplete<String>(
-          name: 'hastag',
-          labelText: 'Hastag',
-          options: hashtag,
-          initialValue:
-              TextEditingValue(text: hastagSelected[windex_hastag - 1]),
-          onChanged: (value) {
-            setState(() {
-              hastagSelected[windex_hastag - 1] = value!;
-            });
-          },
-          onSelected: (option) {
-            setState(() {
-              hastagSelected[windex_hastag - 1] = option;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  int windex_document = -1;
-  var documentSelected = <File>[];
+  var _ringkasan = "";
+  var _masalah = "";
+  var _dampak = "";
+  var _penyebab = "";
+  var _solusi = "";
+  var _hasil_perbaikan = "";
+  var _lingkup_pengetahuan = "";
 
   @override
   void initState() {
     setState(() {
       file_gambar_send.add(File(""));
+      file_docs_send.add(File(""));
       referensiWidgets.add(_referensi());
       penulisWidgets.add(_penulis());
       hashtagWidgets.add(_hashtag());
@@ -184,69 +101,223 @@ class _KiatScreenState extends State<KiatScreen> {
     });
   }
 
+  void handleSubmit() async {
+    if (_formKey.currentState!.validate()) {
+      //_formKey.currentState!.save();
+      AppUtils.hideKeyboard(context);
+
+      //REFERENSI
+      List<Map<dynamic, dynamic>> referensi_send = [];
+      List<String> referensi_send_api = [];
+      for (int i = 0; i < referensiWidgets.length; i++) {
+        var refName = referensiSelected[i];
+        var refId = 0;
+        for (var element in referensiResult) {
+          if (element.referensi == refName) {
+            refId = element.id;
+            referensi_send.add({"id": refId});
+          }
+        }
+        if (refId == 0) {
+          referensi_send_api.add(refName);
+        }
+      }
+      //PENULIS
+      var penulis_send = [];
+      List<String> penulis_send_api = [];
+      for (int i = 0; i < penulisWidgets.length; i++) {
+        var penName = penulisSelected[i];
+        var penId = 0;
+        for (var element in penulisResult) {
+          if (element.namaLengkap == penName) {
+            penId = element.id;
+            penulis_send.add({"id": penId});
+          }
+        }
+        if (penId == 0) {
+          penulis_send_api.add(penName);
+        }
+      }
+      //HASHTAG
+      var hashtag_send = [];
+      List<String> hashtag_send_api = [];
+      for (int i = 0; i < hashtagWidgets.length; i++) {
+        var hasName = hastagSelected[i];
+        var hasId = 0;
+        for (var element in hashtagResult) {
+          if (element.nama == hasName) {
+            hasId = element.id;
+            hashtag_send.add({"id": hasId});
+          }
+        }
+        if (hasId == 0) {
+          hashtag_send_api.add(hasName);
+        }
+      }
+      //DOCUMENT
+      List<File> document_send_api = [];
+      for (int i = 0; i <= documentWidgets2.length; i++) {
+        File docFile = documentSelected[i];
+        document_send_api.add(docFile);
+      }
+
+      try {
+        //SEND REFERENSI
+        var value_ref = await InputPengetahuanService()
+            .submitNewReferensi(referensi_send_api);
+
+        for (var referensi in value_ref!) {
+          referensi_send.add({"id": referensi});
+        }
+
+        // var value_penulis =
+        //     await InputPengetahuanService().submitNewPenulis(penulis_send_api);
+        // print("value_penulis");
+        // print(value_penulis);
+        // for (var penulis in value_penulis!) {
+        //   penulis_send.add({"id": penulis});
+        // }
+        // var value_penulis =
+        //     await InputPengetahuanService().submitNewPenulis(penulis_send_api);
+        var value_hastag =
+            await InputPengetahuanService().submitNewHashTag(hashtag_send_api);
+        for (var hastag in value_hastag!) {
+          hashtag_send.add({"id": hastag});
+        }
+        // print("file_gambar_send");
+        List<PostAttachModel>? value_gambar = await InputPengetahuanService()
+            .submitNewKnowledgeAttachment(file_gambar_send);
+
+        List<PostAttachModel>? value_dokumen = await InputPengetahuanService()
+            .submitNewKnowledgeAttachment(file_docs_send);
+
+        // for (int i = 0; i < value_ref!.length; i++) {
+        //   penulis_send.add({"id": value_ref[i]});
+        // }
+
+
+        Map req = {
+          "jenis_pengetahuan": {"id": widget.id_jenis.toString()},
+          "subjenis_pengetahuan": {
+            "id": widget.id_sub_jenis_pengetahuan.toString()
+          },
+          "judul": _judul,
+          // "ringkasan": ringkasan,
+          "referensi": referensi_send,
+          "masalah": _masalah,
+          "dampak": _dampak,
+          "penyebab": _penyebab,
+          "solusi": _solusi,
+          "hasil_perbaikan": _hasil_perbaikan,
+          // "penulis_1": {"id": 1},
+          "tag": hashtag_send,
+          "thumbnail": {"id": value_gambar?[0].id},
+          "dokumen": {"id": value_dokumen?[0].id},
+          "lingkup_pengetahuan": {"id": _lingkup_pengetahuan},
+          "kompetensi": {}
+        };
+
+
+        var submitPengetahuan =
+            await InputPengetahuanService().submitNewKnowledge(req);
+
+        // print(submitPengetahuan);
+        toasty(context, "SUCCESS!");
+        finish(context);
+
+        // setState(() {
+        // file_gambar_id = value_gambar![0].id;
+        // file_dokumen_id = [value_dokumen![0].id];
+
+        // for (int i = 0; i < value_ref.length; i++) {
+        //   penulis_send.add({"id": value_ref[i]});
+        // }
+        // for (int i = 0; i < hastag_ref!.length; i++) {
+        //   hashtag_send.add({"id": hastag_ref[i]});
+        // }
+        // });
+      } catch (e) {
+        print(e);
+        toasty(context, "error!! ${e.toString()}");
+      }
+
+      //NEXT
+      //SEND PENULIS
+      // await InputPengetahuanService()
+      //     .submitNewPenulis(penulis_send_api)
+      //     ?.then((value_ref) async {
+      //   setState(() {
+      //     for (int i = 0; i < value_ref.length; i++) {
+      //       penulis_send.add({"id": value_ref[i]});
+      //     }
+      //   });
+      //   //NEXT
+      //   //SEND TAG
+      //   await InputPengetahuanService()
+      //       .submitNewHashTag(hashtag_send_api)
+      //       ?.then((value_ref) async {
+      //     setState(() {
+      //       for (int i = 0; i < value_ref.length; i++) {
+      //         hashtag_send.add({"id": value_ref[i]});
+      //       }
+      //     });
+      //     //NEXT
+
+      //   }).catchError((e) {
+      //     toasty(context, "4 : $e");
+      //   });
+      // }).catchError((e) {
+      //   toasty(context, "3 : $e");
+      // });
+      //SEND IMAGE
+
+      // await InputPengetahuanService()
+      //     .submitNewKnowledgeAttachment(file_gambar_send)
+      //     ?.then((value_gambar) async {
+      //   setState(() {
+      //     file_gambar_id = value_gambar[0].id;
+      //   });
+      //   //NEXT
+      //   //SEND DOC
+      //   InputPengetahuanService()
+      //       .submitNewKnowledgeAttachment(document_send_api)
+      //       ?.then((value_dokumen) {
+      //     setState(() {
+      //       for (int x = 0; x < value_dokumen.length; x++) {
+      //         file_dokumen_id.add(value_dokumen[x].id);
+      //       }
+      //     });
+      //     //NEXT
+      //     //SUBMIT ALL
+      //     //SEND FORM
+      //     var docs_send = [];
+      //     for (int ii = 0; ii < file_dokumen_id.length; ii++) {
+      //       docs_send.add({"id": file_dokumen_id[ii]});
+      //     }
+
+      //     var kompetensi_send = [];
+      //     //kompetensi_send.add({"id": 1});
+
+      //         ?.then((value_submit) {
+      //       toasty(context, "SUCCESS!");
+      //       finish(context);
+      //     }).catchError((e) {
+      //       toasty(context, "7 : $e");
+      //     });
+      //   }).catchError((e) {
+      //     toasty(context, "6 : $e");
+      //   });
+      // }).catchError((e) {
+      //   toasty(context, "5 : $e");
+      // });
+    } else {
+      toasty(context, "1 : " + "validate!!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Widget _document0() {
-    //   return docForm(0);
-    // }
-
-    // Widget _document1() {
-    //   return docForm(1);
-    // }
-
-    // Widget _document2() {
-    //   return docForm(2);
-    // }
-
-    // Widget _document3() {
-    //   return docForm(3);
-    // }
-
-    // Widget _document4() {
-    //   return docForm(4);
-    // }
-
-    //documentWidgets2.add(_document0());
-
-    Widget childdd() {
-      List<Widget> widss = [];
-      // switch (windex_document) {
-      //   case 0:
-      //     widss.add(_document0());
-
-      //     break;
-      //   case 1:
-      //     widss.add(_document0());
-      //     widss.add(_document1());
-      //     break;
-      //   case 2:
-      //     widss.add(_document0());
-      //     widss.add(_document1());
-      //     widss.add(_document2());
-      //     break;
-      //   case 3:
-      //     widss.add(_document0());
-      //     widss.add(_document1());
-      //     widss.add(_document2());
-      //     widss.add(_document3());
-      //     break;
-      //   case 4:
-      //     widss.add(_document0());
-      //     widss.add(_document1());
-      //     widss.add(_document2());
-      //     widss.add(_document3());
-      //     widss.add(_document4());
-      //     break;
-      // }
-      //documentWidgets2 = widss;
-
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: widss,
-      );
-    }
-
+ 
     return FutureBuilder<PageInputPengetahuanModel>(
         future: InputPengetahuanService().getInputPengetahuanData(),
         builder: (context, snapshot) {
@@ -267,12 +338,12 @@ class _KiatScreenState extends State<KiatScreen> {
               referensi.add(referensiResult[i].referensi);
             }
             //PENULIS
-            penulis.clear();
-            penulis.add("");
+
             penulisResult = snapshot.data!.penulisModel.results;
             for (var i = 0; i < penulisResult.length; i++) {
               penulis.add(penulisResult[i].namaLengkap);
             }
+
             //HASHTAG
             hashtag.clear();
             hashtag.add("");
@@ -280,6 +351,9 @@ class _KiatScreenState extends State<KiatScreen> {
             for (var i = 0; i < hashtagResult.length; i++) {
               hashtag.add(hashtagResult[i].nama);
             }
+            lingkupPengetahuanResult =
+                snapshot.data!.lingkupPengetahuanModel.results;
+            //Lingkup Pengetahuan
 
             return Scaffold(
               appBar: buildAppBar(),
@@ -293,20 +367,6 @@ class _KiatScreenState extends State<KiatScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         20.height,
-                        // const text.Text(
-                        //   "Sub Jenis Pengetahuan",
-                        //   style: TextStyle(fontSize: 16),
-                        // ),
-                        // 5.height,
-                        // FastDropdown<String>(
-                        //   name: 'dropdown',
-                        //   //labelText: 'Sub Jenis Pengetahuan',
-                        //   items: subJenis,
-                        //   initialValue: '',
-                        //   onChanged: (value) {
-                        //     _sub_jenis_pengetahuan = 2; // TODO
-                        //   },
-                        // ),
                         TextFieldWidget(
                           label: "Sub Jenis Pengetahuan",
                           text: widget.sub_jenis_pengethuan,
@@ -327,16 +387,18 @@ class _KiatScreenState extends State<KiatScreen> {
                           },
                         ),
                         15.height,
-                        const text.Text(
-                          "Ringkasan",
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
+                        TextFieldWidget(
+                          label: "Ringkasan",
+                          text: _ringkasan,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _ringkasan = value;
+                            });
+                          },
                         ),
-                        5.height,
-                        // _quill_toolbar(_ringkasan_controller),
-                        // _quill_editor(_ringkasan_controller),
+
                         15.height,
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -385,45 +447,72 @@ class _KiatScreenState extends State<KiatScreen> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         10.height,
-                        const text.Text(
-                          "Masalah",
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        // const text.Text(
+                        //   "Masalah",
+                        //   style: TextStyle(fontSize: 16),
+                        // ),
                         5.height,
+                        TextFieldWidget(
+                          label: "Masalah",
+                          text: _masalah,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _masalah = value;
+                            });
+                          },
+                        ),
                         // _quill_toolbar(_masalah_controller),
                         // _quill_editor(_masalah_controller),
                         15.height,
-                        const text.Text(
-                          "Dampak",
-                          style: TextStyle(fontSize: 16),
+                        TextFieldWidget(
+                          label: "Dampak",
+                          text: _dampak,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _dampak = value;
+                            });
+                          },
                         ),
-                        5.height,
-                        // _quill_toolbar(_dampak_controller),
-                        // _quill_editor(_dampak_controller),
                         15.height,
-                        const text.Text(
-                          "Penyebab",
-                          style: TextStyle(fontSize: 16),
+                        TextFieldWidget(
+                          label: "Penyebab",
+                          text: _penyebab,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _penyebab = value;
+                            });
+                          },
                         ),
-                        5.height,
-                        // _quill_toolbar(_penyebab_controller),
-                        // _quill_editor(_penyebab_controller),
                         15.height,
-                        const text.Text(
-                          "Solusi",
-                          style: TextStyle(fontSize: 16),
+                        TextFieldWidget(
+                          label: "Solusi",
+                          text: _solusi,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _solusi = value;
+                            });
+                          },
                         ),
-                        5.height,
-                        // _quill_toolbar(_solusi_controller),
-                        // _quill_editor(_solusi_controller),
-                        15.height,
-                        const text.Text(
-                          "Syarat dan Hasil",
-                          style: TextStyle(fontSize: 16),
+
+                        TextFieldWidget(
+                          label: "Syarat dan Hasil",
+                          text: _hasil_perbaikan,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _hasil_perbaikan = value;
+                            });
+                          },
                         ),
-                        5.height,
-                        // _quill_toolbar(_syarat_controller),
-                        // _quill_editor(_syarat_controller),
                         15.height,
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -466,6 +555,7 @@ class _KiatScreenState extends State<KiatScreen> {
                           ),
                         ),
                         15.height,
+
                         const text.Text(
                           "UPLOAD DOKUMEN",
                           style: TextStyle(
@@ -473,123 +563,49 @@ class _KiatScreenState extends State<KiatScreen> {
                         ),
                         10.height,
                         15.height,
-                        const text.Text(
-                          "File Gambar *",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        10.height,
-                        ElevatedButton(
-                          onPressed: () async {
-                            // FilePickerResult? result =
-                            //     await FilePicker.platform.pickFiles(
-                            //   type: FileType.custom,
-                            //   allowedExtensions: ['jpg', 'png'],
-                            // );
-
-                            // if (result != null) {
-                            //   //File file = File(result.files.first);
-                            //   PlatformFile file = result.files.first;
-                            //   setState(() {
-                            //     file_gambar_send[0] =
-                            //         File(result.files.single.path.toString());
-                            //     file_gambar = file.name;
-                            //   });
-                            // } else {
-                            //   // User canceled the picker
-                            // }
+                        UploadButtonWidget(
+                          label: 'File Gambar *',
+                          allowedExtensions: const ['jpg', 'png', 'jpeg'],
+                          onChanged: (file) {
+                            file_gambar_send[0] = file;
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                            shadowColor: Colors.transparent.withOpacity(0),
-                            side: const BorderSide(
-                              width: 0,
-                              color: Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.image_outlined,
-                                  color: Colors.white, size: 20),
-                              6.width,
-                              text.Text(
-                                file_gambar,
-                                style: const TextStyle(color: Colors.white),
-                              ).expand(),
-                            ],
-                          ),
                         ),
-                        5.height,
-                        const text.Text(
-                          "* Max 1Mb, Format .jpg/.png",
-                          style: TextStyle(),
+                        15.height,
+                        UploadButtonWidget(
+                          label: 'File Dokumen *',
+                          allowedExtensions: const ['pdf'],
+                          onChanged: (file) {
+                            file_docs_send[0] = file;
+                          },
                         ),
                         15.height,
                         const text.Text(
-                          "File Dokumen *",
-                          style: TextStyle(fontSize: 16),
+                          "Lingkup Pengetahuan",
+                          style: TextStyle(fontSize: 16, color: textColor),
+                          textAlign: TextAlign.start,
                         ),
-                        childdd(),
-
                         5.height,
-                        const text.Text(
-                          "* Max 1Mb, Format .jpg/.png/.pdf",
-                          style: TextStyle(),
+                        DropdownButtonFormField<int>(
+                          items: lingkupPengetahuanResult
+                              .map<DropdownMenuItem<int>>(
+                                  (LingkupPengetahuanResult lingkup) {
+                            return DropdownMenuItem(
+                              value: lingkup.id,
+                              child: text.Text(
+                                lingkup.nama,
+                                style: const TextStyle(
+                                    fontSize: 16, color: textColor),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (int? value) {
+                            setState(() {
+                              _lingkup_pengetahuan = value.toString();
+                              // _selectedJenisPengetahuan = value!;
+                            });
+                            // _kategori = value!;
+                          },
                         ),
-                        if (windex_document < 4)
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _addDoc();
-                                switch (windex_document) {
-                                  case 0:
-                                    print("0");
-                                    // documentWidgets2.add(_document0());
-                                    break;
-                                  case 1:
-                                    print("1");
-                                    // documentWidgets2.add(_document1());
-                                    break;
-                                  case 2:
-                                    print("2");
-                                    // documentWidgets2.add(_document2());
-                                    break;
-                                  case 3:
-                                    print("3");
-                                    // documentWidgets2.add(_document3());
-                                    break;
-                                  case 4:
-                                    print("4");
-                                    // documentWidgets2.add(_document4());
-                                    break;
-                                }
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent.withOpacity(0),
-                              side: const BorderSide(
-                                width: 0,
-                                color: Colors.transparent,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.add_rounded,
-                                    color: Colors.blue, size: 20),
-                                6.width,
-                                const text.Text(
-                                  "Tambah Dokumen",
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ],
-                            ),
-                          ),
                         15.height,
                         ElevatedButton(
                           onPressed: () async {
@@ -644,188 +660,7 @@ class _KiatScreenState extends State<KiatScreen> {
                             //   ConverterOptions.forEmail(),
                             // );
                             // String syarat = syarat_converter.convert();
-
-                            if (_formKey.currentState!.validate()) {
-                              //_formKey.currentState!.save();
-                              AppUtils.hideKeyboard(context);
-
-                              //REFERENSI
-                              var referensi_send = [];
-                              List<String> referensi_send_api = [];
-                              for (int i = 0;
-                                  i < referensiWidgets.length;
-                                  i++) {
-                                var refName = referensiSelected[i];
-                                var refId = 0;
-                                for (var element in referensiResult) {
-                                  if (element.referensi == refName) {
-                                    refId = element.id;
-                                    referensi_send.add({"id": refId});
-                                  }
-                                }
-                                if (refId == 0) {
-                                  referensi_send_api.add(refName);
-                                }
-                              }
-                              //PENULIS
-                              var penulis_send = [];
-                              List<String> penulis_send_api = [];
-                              for (int i = 0; i < penulisWidgets.length; i++) {
-                                var penName = penulisSelected[i];
-                                var penId = 0;
-                                for (var element in penulisResult) {
-                                  if (element.namaLengkap == penName) {
-                                    penId = element.id;
-                                    penulis_send.add({"id": penId});
-                                  }
-                                }
-                                if (penId == 0) {
-                                  penulis_send_api.add(penName);
-                                }
-                              }
-                              //HASHTAG
-                              var hashtag_send = [];
-                              List<String> hashtag_send_api = [];
-                              for (int i = 0; i < hashtagWidgets.length; i++) {
-                                var hasName = hastagSelected[i];
-                                var hasId = 0;
-                                for (var element in hashtagResult) {
-                                  if (element.nama == hasName) {
-                                    hasId = element.id;
-                                    hashtag_send.add({"id": hasId});
-                                  }
-                                }
-                                if (hasId == 0) {
-                                  hashtag_send_api.add(hasName);
-                                }
-                              }
-                              //DOCUMENT
-                              List<File> document_send_api = [];
-                              for (int i = 0;
-                                  i <= documentWidgets2.length;
-                                  i++) {
-                                File docFile = documentSelected[i];
-                                document_send_api.add(docFile);
-                              }
-
-                              //SEND REFERENSI
-                              await InputPengetahuanService()
-                                  .submitNewReferensi(referensi_send_api)
-                                  ?.then((value_ref) async {
-                                setState(() {
-                                  for (int i = 0; i < value_ref.length; i++) {
-                                    referensi_send.add({"id": value_ref[i]});
-                                  }
-                                });
-                                //NEXT
-                                //SEND PENULIS
-                                await InputPengetahuanService()
-                                    .submitNewPenulis(penulis_send_api)
-                                    ?.then((value_ref) async {
-                                  setState(() {
-                                    for (int i = 0; i < value_ref.length; i++) {
-                                      penulis_send.add({"id": value_ref[i]});
-                                    }
-                                  });
-                                  //NEXT
-                                  //SEND TAG
-                                  await InputPengetahuanService()
-                                      .submitNewHashTag(hashtag_send_api)
-                                      ?.then((value_ref) async {
-                                    setState(() {
-                                      for (int i = 0;
-                                          i < value_ref.length;
-                                          i++) {
-                                        hashtag_send.add({"id": value_ref[i]});
-                                      }
-                                    });
-                                    //NEXT
-                                    //SEND IMAGE
-                                    await InputPengetahuanService()
-                                        .submitNewKnowledgeAttachment(
-                                            file_gambar_send)
-                                        ?.then((value_gambar) async {
-                                      setState(() {
-                                        file_gambar_id = value_gambar[0].id;
-                                      });
-                                      //NEXT
-                                      //SEND DOC
-                                      InputPengetahuanService()
-                                          .submitNewKnowledgeAttachment(
-                                              document_send_api)
-                                          ?.then((value_dokumen) {
-                                        setState(() {
-                                          for (int x = 0;
-                                              x < value_dokumen.length;
-                                              x++) {
-                                            file_dokumen_id
-                                                .add(value_dokumen[x].id);
-                                          }
-                                        });
-                                        //NEXT
-                                        //SUBMIT ALL
-                                        //SEND FORM
-                                        var docs_send = [];
-                                        for (int ii = 0;
-                                            ii < file_dokumen_id.length;
-                                            ii++) {
-                                          docs_send
-                                              .add({"id": file_dokumen_id[ii]});
-                                        }
-
-                                        var kompetensi_send = [];
-                                        //kompetensi_send.add({"id": 1});
-
-                                        Map req = {
-                                          "jenis_pengetahuan": {
-                                            "id": widget.id_jenis.toString()
-                                          },
-                                          "subjenis_pengetahuan": {
-                                            "id": widget
-                                                .id_sub_jenis_pengetahuan
-                                                .toString()
-                                          },
-                                          "judul": _judul,
-                                          // "ringkasan": ringkasan,
-                                          "referensi": referensi_send,
-                                          // "masalah": masalah,
-                                          // "dampak": dampak,
-                                          // "penyebab": penyebab,
-                                          // "solusi": solusi,
-                                          // "hasil_perbaikan": syarat,
-                                          "penulis_1": {"id": 1},
-                                          "tag": hashtag_send,
-                                          "thumbnail": {"id": file_gambar_id},
-                                          "dokumen": docs_send,
-                                          "lingkup_pengetahuan": {"id": 1},
-                                          "kompetensi": kompetensi_send,
-                                        };
-                                        InputPengetahuanService()
-                                            .submitNewKnowledge(req)
-                                            ?.then((value_submit) {
-                                          toasty(context, "SUCCESS!");
-                                          finish(context);
-                                        }).catchError((e) {
-                                          toasty(context, "7 : $e");
-                                        });
-                                      }).catchError((e) {
-                                        toasty(context, "6 : $e");
-                                      });
-                                    }).catchError((e) {
-                                      toasty(context, "5 : $e");
-                                    });
-                                  }).catchError((e) {
-                                    toasty(context, "4 : $e");
-                                  });
-                                }).catchError((e) {
-                                  toasty(context, "3 : $e");
-                                });
-                              }).catchError((e) {
-                                toasty(context, "2 : $e");
-                              });
-                            } else {
-                              toasty(context, "1 : " + "validate!!");
-                            }
+                            handleSubmit();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
@@ -923,6 +758,105 @@ class _KiatScreenState extends State<KiatScreen> {
       ),
     );
   }
+
+  int windex_referensi = 0;
+  var referensiSelected = <String>[];
+  Widget _referensi() {
+    setState(() {
+      windex_referensi++;
+      referensiSelected.add("");
+    });
+    return Column(
+      children: [
+        15.height,
+        FastAutocomplete<String>(
+          name: 'referensi',
+          labelText: 'Referensi',
+          options: referensi,
+          initialValue:
+              TextEditingValue(text: referensiSelected[windex_referensi - 1]),
+          onChanged: (value) {
+            setState(() {
+              referensiSelected[windex_referensi - 1] = value!;
+            });
+          },
+          onSelected: (option) {
+            setState(() {
+              referensiSelected[windex_referensi - 1] = option;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  int windex_penulias = 0;
+  var penulisSelected = <String>[];
+  Widget _penulis() {
+    setState(() {
+      windex_penulias++;
+      penulisSelected.add("");
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        // 15.height,
+        FastAutocomplete<String>(
+          name: 'penulis',
+          labelText: 'Penulis',
+          options: penulis,
+          initialValue:
+              TextEditingValue(text: penulisSelected[windex_penulias - 1]),
+          onChanged: (value) {
+            setState(() {
+              penulisSelected[windex_penulias - 1] = value!;
+            });
+          },
+          onSelected: (option) {
+            setState(() {
+              penulisSelected[windex_penulias - 1] = option;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  int windex_hastag = 0;
+  var hastagSelected = <String>[];
+  Widget _hashtag() {
+    setState(() {
+      windex_hastag++;
+      hastagSelected.add("");
+    });
+    return Column(
+      children: [
+        15.height,
+        FastAutocomplete<String>(
+          name: 'hastag',
+          labelText: 'Hastag',
+          options: hashtag,
+          initialValue:
+              TextEditingValue(text: hastagSelected[windex_hastag - 1]),
+          onChanged: (value) {
+            setState(() {
+              hastagSelected[windex_hastag - 1] = value!;
+            });
+          },
+          onSelected: (option) {
+            setState(() {
+              hastagSelected[windex_hastag - 1] = option;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  int windex_document = -1;
+  var documentSelected = <File>[];
 
   // _quill_toolbar(QuillController controller) {
   // return QuillToolbar.basic(
