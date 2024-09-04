@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/text.dart' as text;
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
@@ -14,16 +15,28 @@ import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
+import 'package:kms_bpkp_mobile/models/api_tenaga_ahli_model.dart';
+import 'package:kms_bpkp_mobile/models/common_model.dart';
 import 'package:kms_bpkp_mobile/models/page_input_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
 import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:kms_bpkp_mobile/utils.dart';
+import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multi_select.dart';
+import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multiple_search.dart';
+import 'package:kms_bpkp_mobile/wigets/custom_popup_item_select.dart';
 import 'package:kms_bpkp_mobile/wigets/upload_button_widget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-class KiatScreen extends StatefulWidget {
-  const KiatScreen(
+class FileData {
+  final int urutan;
+  final File file;
+
+  FileData({required this.urutan, required this.file});
+}
+
+class TugasScreen extends StatefulWidget {
+  const TugasScreen(
       {super.key,
       required this.title,
       required this.id_jenis,
@@ -34,10 +47,10 @@ class KiatScreen extends StatefulWidget {
   final String sub_jenis_pengethuan;
   final int id_sub_jenis_pengetahuan;
   @override
-  State<KiatScreen> createState() => _KiatScreenState();
+  State<TugasScreen> createState() => _TugasScreenState();
 }
 
-class _KiatScreenState extends State<KiatScreen> {
+class _TugasScreenState extends State<TugasScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Widget> referensiWidgets = <Widget>[];
   List<Widget> penulisWidgets = <Widget>[];
@@ -53,37 +66,39 @@ class _KiatScreenState extends State<KiatScreen> {
   List<String> hashtag = <String>[];
   List<File> document = <File>[];
   List<LingkupPengetahuanResult> lingkupPengetahuanResult = [];
+  List<TenagaAhliResult> tenagaAhliResult = [];
+  List<OptionsModel> _selectedTenagaAhli = [];
+  List<OptionsModel> _selectedPedoman = [];
+  List<OptionsModel> _selectedReferensi = [];
+  List<OptionsModel> _selectedPenulis = [];
+  List<OptionsModel> _selectedNarasumer = [];
+  List<OptionsModel> _selectedPenerbit = [];
+  List<FileData> docs = [];
 
   String file_gambar = "Pilih Gambar";
   List<String> file_dokumen = [];
 
   List<File> file_gambar_send = [];
-  List<File> file_docs_send = [];
-
-  int file_gambar_id = 0;
-  List<int> file_dokumen_id = [];
-
-  // final QuillController _ringkasan_controller = QuillController.basic();
-  // final QuillController _masalah_controller = QuillController.basic();
-  // final QuillController _dampak_controller = QuillController.basic();
-  // final QuillController _penyebab_controller = QuillController.basic();
-  // final QuillController _solusi_controller = QuillController.basic();
-  // final QuillController _syarat_controller = QuillController.basic();
 
   var _judul = "";
   var _ringkasan = "";
-  var _masalah = "";
-  var _dampak = "";
-  var _penyebab = "";
-  var _solusi = "";
-  var _hasil_perbaikan = "";
+  var _tujuan = "";
+  var _dasar_hukum = "";
+  var _proses_bisnis = "";
+  var _rumusan_masalah = "";
+  var _risiko_objek_pengawasan = "";
+  var _metode_pengawasan = "";
+  var _temuan_material = "";
   var _lingkup_pengetahuan = "";
+  var _keahlian_dibutuhkan = "";
+  var _data_digunakan = "";
+  var _status_pengetahuan = "";
 
   @override
   void initState() {
     setState(() {
       file_gambar_send.add(File(""));
-      file_docs_send.add(File(""));
+
       referensiWidgets.add(_referensi());
       penulisWidgets.add(_penulis());
       hashtagWidgets.add(_hashtag());
@@ -106,38 +121,6 @@ class _KiatScreenState extends State<KiatScreen> {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
 
-      //REFERENSI
-      List<Map<dynamic, dynamic>> referensi_send = [];
-      List<String> referensi_send_api = [];
-      for (int i = 0; i < referensiWidgets.length; i++) {
-        var refName = referensiSelected[i];
-        var refId = 0;
-        for (var element in referensiResult) {
-          if (element.referensi == refName) {
-            refId = element.id;
-            referensi_send.add({"id": refId});
-          }
-        }
-        if (refId == 0) {
-          referensi_send_api.add(refName);
-        }
-      }
-      //PENULIS
-      var penulis_send = [];
-      List<String> penulis_send_api = [];
-      for (int i = 0; i < penulisWidgets.length; i++) {
-        var penName = penulisSelected[i];
-        var penId = 0;
-        for (var element in penulisResult) {
-          if (element.namaLengkap == penName) {
-            penId = element.id;
-            penulis_send.add({"id": penId});
-          }
-        }
-        if (penId == 0) {
-          penulis_send_api.add(penName);
-        }
-      }
       //HASHTAG
       var hashtag_send = [];
       List<String> hashtag_send_api = [];
@@ -162,31 +145,18 @@ class _KiatScreenState extends State<KiatScreen> {
       }
 
       try {
-        //SEND REFERENSI
-        var value_ref = await InputPengetahuanService()
-            .submitNewReferensi(referensi_send_api);
-
-        for (var referensi in value_ref!) {
-          referensi_send.add({"id": referensi});
-        }
-
-
         var value_hastag =
             await InputPengetahuanService().submitNewHashTag(hashtag_send_api);
         for (var hastag in value_hastag!) {
           hashtag_send.add({"id": hastag});
         }
-        // print("file_gambar_send");
-        List<PostAttachModel>? value_gambar = await InputPengetahuanService()
-            .submitNewKnowledgeAttachment(file_gambar_send);
+
+        docs.sort((a, b) => a.urutan.compareTo(b.urutan));
+
+        List<File> docs_send = docs.map((doc) => doc.file).toList();
 
         List<PostAttachModel>? value_dokumen = await InputPengetahuanService()
-            .submitNewKnowledgeAttachment(file_docs_send);
-
-        // for (int i = 0; i < value_ref!.length; i++) {
-        //   penulis_send.add({"id": value_ref[i]});
-        // }
-
+            .submitNewKnowledgeAttachment(docs_send);
 
         Map req = {
           "jenis_pengetahuan": {"id": widget.id_jenis.toString()},
@@ -194,114 +164,45 @@ class _KiatScreenState extends State<KiatScreen> {
             "id": widget.id_sub_jenis_pengetahuan.toString()
           },
           "judul": _judul,
-          // "ringkasan": ringkasan,
-          "referensi": referensi_send,
-          "masalah": _masalah,
-          "dampak": _dampak,
-          "penyebab": _penyebab,
-          "solusi": _solusi,
-          "hasil_perbaikan": _hasil_perbaikan,
+          "ringkasan": _ringkasan,
+          "referensi": _selectedReferensi.map((x) => x.value).toList(),
+          "tujuan": _tujuan,
+          "dasar_hukum": _dasar_hukum,
+          "proses_bisnis": _proses_bisnis,
+          "rumusan_masalah": _rumusan_masalah,
+          "risiko_objek_pengawasan": _risiko_objek_pengawasan,
+          "metode_pengawasan": _metode_pengawasan,
+          "temuan_material": _temuan_material,
+          "keahlian_dibutuhkan": _keahlian_dibutuhkan,
+          "data_digunakan": _data_digunakan,
           // "penulis_1": {"id": 1},
           "tag": hashtag_send,
-          "thumbnail": {"id": value_gambar?[0].id},
-          "dokumen": {"id": value_dokumen?[0].id},
+          "tenaga_ahli": _selectedTenagaAhli.map((x) => x.value).toList(),
+          "pedoman": _selectedPedoman.map((x) => x.value).toList(),
+          "thumbnail": {"id": value_dokumen![0].id},
+          "dokumen": value_dokumen
+              .where((item) => value_dokumen.indexOf(item) != 0)
+              .toList()
+              .map((item) => ({"id": item.id})),
           "lingkup_pengetahuan": {"id": _lingkup_pengetahuan},
-          "kompetensi": {}
+          "kompetensi": {},
+          "status_pengetahuan": _status_pengetahuan
         };
-
+        int i = 0;
+        for (var penulis in _selectedPenulis) {
+          req['penulis_$i'] = penulis.value;
+          i++;
+        }
 
         var submitPengetahuan =
             await InputPengetahuanService().submitNewKnowledge(req);
 
-        // print(submitPengetahuan);
         toasty(context, "SUCCESS!");
         finish(context);
-
-        // setState(() {
-        // file_gambar_id = value_gambar![0].id;
-        // file_dokumen_id = [value_dokumen![0].id];
-
-        // for (int i = 0; i < value_ref.length; i++) {
-        //   penulis_send.add({"id": value_ref[i]});
-        // }
-        // for (int i = 0; i < hastag_ref!.length; i++) {
-        //   hashtag_send.add({"id": hastag_ref[i]});
-        // }
-        // });
       } catch (e) {
         print(e);
         toasty(context, "error!! ${e.toString()}");
       }
-
-      //NEXT
-      //SEND PENULIS
-      // await InputPengetahuanService()
-      //     .submitNewPenulis(penulis_send_api)
-      //     ?.then((value_ref) async {
-      //   setState(() {
-      //     for (int i = 0; i < value_ref.length; i++) {
-      //       penulis_send.add({"id": value_ref[i]});
-      //     }
-      //   });
-      //   //NEXT
-      //   //SEND TAG
-      //   await InputPengetahuanService()
-      //       .submitNewHashTag(hashtag_send_api)
-      //       ?.then((value_ref) async {
-      //     setState(() {
-      //       for (int i = 0; i < value_ref.length; i++) {
-      //         hashtag_send.add({"id": value_ref[i]});
-      //       }
-      //     });
-      //     //NEXT
-
-      //   }).catchError((e) {
-      //     toasty(context, "4 : $e");
-      //   });
-      // }).catchError((e) {
-      //   toasty(context, "3 : $e");
-      // });
-      //SEND IMAGE
-
-      // await InputPengetahuanService()
-      //     .submitNewKnowledgeAttachment(file_gambar_send)
-      //     ?.then((value_gambar) async {
-      //   setState(() {
-      //     file_gambar_id = value_gambar[0].id;
-      //   });
-      //   //NEXT
-      //   //SEND DOC
-      //   InputPengetahuanService()
-      //       .submitNewKnowledgeAttachment(document_send_api)
-      //       ?.then((value_dokumen) {
-      //     setState(() {
-      //       for (int x = 0; x < value_dokumen.length; x++) {
-      //         file_dokumen_id.add(value_dokumen[x].id);
-      //       }
-      //     });
-      //     //NEXT
-      //     //SUBMIT ALL
-      //     //SEND FORM
-      //     var docs_send = [];
-      //     for (int ii = 0; ii < file_dokumen_id.length; ii++) {
-      //       docs_send.add({"id": file_dokumen_id[ii]});
-      //     }
-
-      //     var kompetensi_send = [];
-      //     //kompetensi_send.add({"id": 1});
-
-      //         ?.then((value_submit) {
-      //       toasty(context, "SUCCESS!");
-      //       finish(context);
-      //     }).catchError((e) {
-      //       toasty(context, "7 : $e");
-      //     });
-      //   }).catchError((e) {
-      //     toasty(context, "6 : $e");
-      //   });
-      // }).catchError((e) {
-      //   toasty(context, "5 : $e");
-      // });
     } else {
       toasty(context, "1 : " + "validate!!");
     }
@@ -309,7 +210,6 @@ class _KiatScreenState extends State<KiatScreen> {
 
   @override
   Widget build(BuildContext context) {
- 
     return FutureBuilder<PageInputPengetahuanModel>(
         future: InputPengetahuanService().getInputPengetahuanData(),
         builder: (context, snapshot) {
@@ -345,6 +245,32 @@ class _KiatScreenState extends State<KiatScreen> {
             }
             lingkupPengetahuanResult =
                 snapshot.data!.lingkupPengetahuanModel.results;
+            tenagaAhliResult = snapshot.data!.tenagaAhliModel.results;
+            List<OptionsModel> optionsReferensi = referensiResult
+                .map((ref) => OptionsModel(label: ref.referensi, value: ref.id))
+                .toList();
+            List<OptionsModel> optionsTenagaAhli = tenagaAhliResult
+                .map((tenaga) =>
+                    OptionsModel(label: tenaga.namaLengkap, value: tenaga.id))
+                .toList();
+            List<OptionsModel> optionsPedoman = snapshot
+                .data!.pedomanModel.results
+                .map((pedoman) =>
+                    OptionsModel(label: pedoman.nama, value: pedoman.id))
+                .toList();
+            List<OptionsModel> optionsPenulis = snapshot
+                .data!.penulisModel.results
+                .map((p) => OptionsModel(label: p.namaLengkap, value: p.id))
+                .toList();
+            List<OptionsModel> optionsNarsum = snapshot
+                .data!.penulisModel.results
+                .map((p) => OptionsModel(label: p.namaLengkap, value: p.id))
+                .toList();
+            List<OptionsModel> optionsPenerbit = snapshot
+                .data!.penerbitModel.results
+                .map((p) => OptionsModel(label: p.namaPenerbit, value: p.id))
+                .toList();
+
             //Lingkup Pengetahuan
 
             return Scaffold(
@@ -392,49 +318,19 @@ class _KiatScreenState extends State<KiatScreen> {
                         ),
 
                         15.height,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: referensiWidgets,
-                        ),
-                        // FastAutocomplete<String>(
-                        //   name: 'referensi',
-                        //   labelText: 'Referensi',
-                        //   options: referensi,
-                        // ),
+                        CustomDropdownMultipleSearch(
+                            label: 'Referensi *',
+                            options: optionsReferensi,
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedReferensi = data;
+                              });
+                            },
+                            selectedItems: _selectedReferensi),
                         15.height,
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              referensiWidgets.add(_referensi());
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent.withOpacity(0),
-                            side: const BorderSide(
-                              width: 0,
-                              color: Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.add_rounded,
-                                  color: Colors.blue, size: 20),
-                              6.width,
-                              const text.Text(
-                                "Tambah Referensi",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ],
-                          ),
-                        ),
-                        15.height,
+
                         const text.Text(
-                          "PERMASALAHAN",
+                          "PENUGASAN",
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -445,72 +341,169 @@ class _KiatScreenState extends State<KiatScreen> {
                         // ),
                         5.height,
                         TextFieldWidget(
-                          label: "Masalah",
-                          text: _masalah,
+                          label: "Tujuan Penugasan",
+                          text: _tujuan,
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
-                              _masalah = value;
+                              _tujuan = value;
                             });
                           },
                         ),
-                        // _quill_toolbar(_masalah_controller),
-                        // _quill_editor(_masalah_controller),
+
                         15.height,
                         TextFieldWidget(
-                          label: "Dampak",
-                          text: _dampak,
+                          label: "Dasar Hukum",
+                          text: _dasar_hukum,
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
-                              _dampak = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Penyebab",
-                          text: _penyebab,
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _penyebab = value;
+                              _dasar_hukum = value;
                             });
                           },
                         ),
                         15.height,
                         TextFieldWidget(
-                          label: "Solusi",
-                          text: _solusi,
+                          label: "Proses Bisnis Objek Pengawasan",
+                          text: _proses_bisnis,
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
-                              _solusi = value;
+                              _proses_bisnis = value;
+                            });
+                          },
+                        ),
+                        15.height,
+                        TextFieldWidget(
+                          label: "Rumusan Masalah",
+                          text: _rumusan_masalah,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _rumusan_masalah = value;
                             });
                           },
                         ),
 
                         TextFieldWidget(
-                          label: "Syarat dan Hasil",
-                          text: _hasil_perbaikan,
+                          label: "Risiko Objek Pengawasan",
+                          text: _risiko_objek_pengawasan,
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
-                              _hasil_perbaikan = value;
+                              _risiko_objek_pengawasan = value;
                             });
                           },
                         ),
                         15.height,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: penulisWidgets,
+                        TextFieldWidget(
+                          label: "Metode Pengawasan",
+                          text: _metode_pengawasan,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _metode_pengawasan = value;
+                            });
+                          },
                         ),
+                        15.height,
+                        TextFieldWidget(
+                          label: "Temuan Material/Berulang",
+                          text: _temuan_material,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _temuan_material = value;
+                            });
+                          },
+                        ),
+
+                        15.height,
+                        TextFieldWidget(
+                          label: "Keahlian Dibutuhkan",
+                          text: _keahlian_dibutuhkan,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _keahlian_dibutuhkan = value;
+                            });
+                          },
+                        ),
+                        15.height,
+                        TextFieldWidget(
+                          label: "Data yang Digunakan",
+                          text: _data_digunakan,
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _data_digunakan = value;
+                            });
+                          },
+                        ),
+                        15.height,
+
+                        CustomDropdownMultipleSearch(
+                            label: "Tenaga Ahli BPKP yang Tersedia *",
+                            options: optionsTenagaAhli,
+                            onChanged: (data) {
+                              _selectedTenagaAhli = data;
+                            },
+                            selectedItems: _selectedTenagaAhli),
+                        15.height,
+                        CustomDropdownMultipleSearch(
+                            label: "Pedoman *",
+                            options: optionsPedoman,
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedPedoman = data;
+                              });
+                            },
+                            selectedItems: _selectedPedoman),
+                        15.height,
+                        const text.Text(
+                          "PENULIS PENGETAHUAN",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        10.height,
+                        CustomDropdownMultipleSearch(
+                            label: "Nama Penulis *",
+                            options: optionsPenulis,
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedPenulis = data;
+                              });
+                            },
+                            selectedItems: _selectedPenulis),
+                        15.height,
+                        CustomDropdownMultipleSearch(
+                            label: "Narasumber *",
+                            options: optionsNarsum,
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedNarasumer = data;
+                              });
+                            },
+                            selectedItems: _selectedNarasumer),
+                        15.height,
+                        CustomDropdownMultipleSearch(
+                            label: "Penerbit *",
+                            options: optionsPenerbit,
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedPenerbit = data;
+                              });
+                            },
+                            selectedItems: _selectedPenerbit),
                         15.height,
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -553,21 +546,64 @@ class _KiatScreenState extends State<KiatScreen> {
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        10.height,
                         15.height,
+
                         UploadButtonWidget(
                           label: 'File Gambar *',
                           allowedExtensions: const ['jpg', 'png', 'jpeg'],
                           onChanged: (file) {
-                            file_gambar_send[0] = file;
+                            docs.add(FileData(urutan: 0, file: file));
                           },
                         ),
                         15.height,
                         UploadButtonWidget(
-                          label: 'File Dokumen *',
+                          label: 'File Audit Program',
+                          allowedExtensions: const ['pdf', 'docx'],
+                          onChanged: (file) {
+                            docs.add(FileData(urutan: 1, file: file));
+                          },
+                        ),
+                        15.height,
+                        UploadButtonWidget(
+                          label: 'File Kertas Kerja Utama',
                           allowedExtensions: const ['pdf'],
                           onChanged: (file) {
-                            file_docs_send[0] = file;
+                            docs.add(FileData(urutan: 2, file: file));
+                          },
+                        ),
+                        15.height,
+                        UploadButtonWidget(
+                          label: 'Dokumen Lainnya',
+                          allowedExtensions: const ['pdf'],
+                          onChanged: (file) {
+                            docs.add(FileData(urutan: 3, file: file));
+                          },
+                        ),
+                        15.height,
+                        const text.Text(
+                          "Status Pengetahuan",
+                          style: TextStyle(fontSize: 16, color: textColor),
+                          textAlign: TextAlign.start,
+                        ),
+                        5.height,
+                        DropdownButtonFormField<String>(
+                          items: ["1", "2"]
+                              .map<DropdownMenuItem<String>>((status) {
+                            return DropdownMenuItem(
+                              value: status,
+                              child: text.Text(
+                                status == "1" ? "Aktif" : "Tidak Aktif",
+                                style: const TextStyle(
+                                    fontSize: 16, color: textColor),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _status_pengetahuan = value ?? "";
+                              // _selectedJenisPengetahuan = value!;
+                            });
+                            // _kategori = value!;
                           },
                         ),
                         15.height,
@@ -601,57 +637,6 @@ class _KiatScreenState extends State<KiatScreen> {
                         15.height,
                         ElevatedButton(
                           onPressed: () async {
-                            //SUBMIT
-                            //_ringkasan
-                            // final ringkasan_converter =
-                            //     QuillDeltaToHtmlConverter(
-                            //   List.castFrom(_ringkasan_controller.document
-                            //       .toDelta()
-                            //       .toJson()),
-                            //   ConverterOptions.forEmail(),
-                            // );
-                            // String ringkasan = ringkasan_converter.convert();
-                            // //_masalah
-                            // final masalah_converter = QuillDeltaToHtmlConverter(
-                            //   List.castFrom(_masalah_controller.document
-                            //       .toDelta()
-                            //       .toJson()),
-                            //   ConverterOptions.forEmail(),
-                            // );
-                            // String masalah = masalah_converter.convert();
-                            // //_dampak
-                            // final dampak_converter = QuillDeltaToHtmlConverter(
-                            //   List.castFrom(_dampak_controller.document
-                            //       .toDelta()
-                            //       .toJson()),
-                            //   ConverterOptions.forEmail(),
-                            // );
-                            // String dampak = dampak_converter.convert();
-                            // //_penyebab
-                            // final penyebab_converter =
-                            //     QuillDeltaToHtmlConverter(
-                            //   List.castFrom(_penyebab_controller.document
-                            //       .toDelta()
-                            //       .toJson()),
-                            //   ConverterOptions.forEmail(),
-                            // );
-                            // String penyebab = penyebab_converter.convert();
-                            // //_solusi
-                            // final solusi_converter = QuillDeltaToHtmlConverter(
-                            //   List.castFrom(_solusi_controller.document
-                            //       .toDelta()
-                            //       .toJson()),
-                            //   ConverterOptions.forEmail(),
-                            // );
-                            // String solusi = solusi_converter.convert();
-                            // //_syarat
-                            // final syarat_converter = QuillDeltaToHtmlConverter(
-                            //   List.castFrom(_syarat_controller.document
-                            //       .toDelta()
-                            //       .toJson()),
-                            //   ConverterOptions.forEmail(),
-                            // );
-                            // String syarat = syarat_converter.convert();
                             handleSubmit();
                           },
                           style: ElevatedButton.styleFrom(
@@ -849,100 +834,4 @@ class _KiatScreenState extends State<KiatScreen> {
 
   int windex_document = -1;
   var documentSelected = <File>[];
-
-  // _quill_toolbar(QuillController controller) {
-  // return QuillToolbar.basic(
-  //   controller: controller,
-  //   showAlignmentButtons: true,
-  //   showBackgroundColorButton: false,
-  //   showCodeBlock: false,
-  //   showClearFormat: false,
-  //   showColorButton: false,
-  //   showIndent: false,
-  //   showInlineCode: false,
-  //   showDividers: false,
-  //   showListCheck: false,
-  //   showQuote: false,
-  //   showRedo: false,
-  //   showUndo: false,
-  //   showFontFamily: false,
-  //   showFontSize: false,
-  //   showDirection: false,
-  //   showHeaderStyle: false,
-  //   showSearchButton: false,
-  //   showSubscript: false,
-  //   showSuperscript: false,
-  //   showStrikeThrough: false,
-  //   axis: Axis.horizontal,
-  //   toolbarIconAlignment: WrapAlignment.start,
-  // );
-  //}
-
-  // _quill_editor(QuillController controller) {
-  // return Container(
-  //   height: 150,
-  //   padding: const EdgeInsets.all(5.0),
-  //   decoration: BoxDecoration(
-  //     border: Border.all(
-  //       width: 0.3,
-  //       color: const Color.fromARGB(255, 35, 35, 35),
-  //     ),
-  //     borderRadius: BorderRadius.circular(9),
-  //   ),
-  //   child: QuillEditor.basic(
-  //     controller: controller,
-  //     readOnly: false, // true for view only mode
-  //   ),
-  // );
-  //}
-
-  // Widget docForm(int _windex_document) {
-  //   return Column(
-  //     children: [
-  //       10.height,
-  //       ElevatedButton(
-  //         onPressed: () async {
-  //           FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //             type: FileType.custom,
-  //             allowedExtensions: ['jpg', 'png', 'pdf'],
-  //           );
-
-  //           if (result != null) {
-  //             //File file = File(result.files.first);
-  //             PlatformFile file = result.files.first;
-  //             setState(() {
-  //               documentSelected[_windex_document] =
-  //                   File(result.files.single.path.toString());
-  //               file_dokumen[_windex_document] = file.name;
-  //             });
-  //           } else {
-  //             // User canceled the picker
-  //           }
-  //         },
-  //         style: ElevatedButton.styleFrom(
-  //           backgroundColor: Colors.grey,
-  //           shadowColor: Colors.transparent.withOpacity(0),
-  //           side: const BorderSide(
-  //             width: 0,
-  //             color: Colors.transparent,
-  //           ),
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(8),
-  //           ),
-  //         ),
-  //         child: Row(
-  //           children: [
-  //             const Icon(Icons.file_present_outlined,
-  //                 color: Colors.white, size: 20),
-  //             6.width,
-  //             text.Text(
-  //               file_dokumen[_windex_document],
-  //               style: const TextStyle(color: Colors.white),
-  //             ).expand(),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 }

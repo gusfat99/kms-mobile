@@ -35,34 +35,34 @@ class InputPengetahuanService implements InputPengetahuanApiService {
         await handleResponse(await getRequest(referensiEp, apiParam, token));
     var pengetahaun = await handleResponse(
         await getRequest(pengetahuanEp, apiParamPengetahuan, token));
-    print("resultReferensi");
+    
     //TENAGA AHLI
     var resultTenagaAhli =
         await handleResponse(await getRequest(tenagaAhliEp, apiParam, token));
-    print("resultTenagaAhli");
+   
     //PEDOMAN
     var resultPedoman =
         await handleResponse(await getRequest(pedomanEp, apiParam, token));
-    print("resultPedoman");
+   
     //PENULIS
     var resultPenulis =
         await handleResponse(await getRequest(penulisEp, apiParam, token));
-    print("resultPenulis");
+  
     //PENGARANG
     var resultPengarang =
         await handleResponse(await getRequest(pengarangEp, apiParam, token));
-    print("resultPengarang");
+   
     //PENERBIT
     var resultPenerbit =
         await handleResponse(await getRequest(penerbitEp, apiParam, token));
-    print("resultPenerbit");
+ 
     //HASHTAG
     var resultHashTag =
         await handleResponse(await getRequest(hashtagEp, apiParam, token));
-    print("resultHashTag");
+  
     var resultLingkupPengetahuan = await handleResponse(
         await getRequest(lingkupPengetahuanEp, apiParam, token));
-    print("resultLingkupPengetahuan");
+
 
     PageInputPengetahuanModel inputPengetahuanData = PageInputPengetahuanModel(
         subJenisPengetahuanModel:
