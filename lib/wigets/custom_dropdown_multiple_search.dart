@@ -11,9 +11,11 @@ class CustomDropdownMultipleSearch extends StatelessWidget {
   final List<OptionsModel> selectedItems;
   final void Function(List<OptionsModel> data) onChanged;
   final String label;
+  final String? Function(List<OptionsModel>?)? validator;
 
   const CustomDropdownMultipleSearch(
       {super.key,
+      this.validator,
       required this.label,
       required this.options,
       required this.onChanged,
@@ -30,6 +32,8 @@ class CustomDropdownMultipleSearch extends StatelessWidget {
           items: options,
           dropdownBuilder: customDropdownMultiSelect,
           onChanged: onChanged,
+          // validator: ,
+          validator: validator,
           compareFn: (item, selectedItem) => item.value == selectedItem.value,
           popupProps: const PopupPropsMultiSelection.modalBottomSheet(
             showSearchBox: true,

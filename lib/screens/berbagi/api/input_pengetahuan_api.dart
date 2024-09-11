@@ -120,7 +120,10 @@ class InputPengetahuanService implements InputPengetahuanApiService {
 
     List<int> resultApi = [];
     for (int i = 0; i < hashtag_send_api.length; i++) {
-      Map<String, String> apiParam = {"nama": hashtag_send_api[i]};
+      Map<String, String> apiParam = {
+        "nama": hashtag_send_api[i],
+        "jenis": "kms"
+      };
       var resultPost = await handleResponse(
           await postRequest(pengetahuanSubmitHashTag, apiParam, token!));
       NewTagModel resultPostRef = NewTagModel.fromJson(resultPost);

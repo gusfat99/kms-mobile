@@ -6,6 +6,7 @@ import 'package:kms_bpkp_mobile/models/api_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/page_berbagi_model.dart';
 import 'package:kms_bpkp_mobile/routes.dart';
+import 'package:kms_bpkp_mobile/screens/berbagi/add/kapitalis_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/kiat_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/tugas_screen.dart';
 import 'package:kms_bpkp_mobile/screens/knowledge/api/knowledge_api.dart';
@@ -101,12 +102,12 @@ class _BerbagiScreenState extends State<BerbagiScreen> {
 
                         break;
                       case "3": //Kapitalisasi / Analytic Today
-                        // KapitalisasiScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
+                        KapitalisKnowlegeScreen(
+                                title: _jenis_pengetahuan,
+                                id_jenis: id_jenis,
+                                sub_jenis_pengethuan: subpengetahuan[i].nama,
+                                id_sub_jenis_pengetahuan: subpengetahuan[i].id)
+                            .launch(context);
                         break;
                       case "4": //Resensi
                         // ResensiScreen(

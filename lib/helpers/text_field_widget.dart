@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:form_validator/form_validator.dart';
+import 'package:kms_bpkp_mobile/helpers/my_validation_locale.dart';
 import 'package:kms_bpkp_mobile/helpers/space.dart';
 
 class TextFieldWidget extends StatefulWidget {
@@ -6,15 +8,19 @@ class TextFieldWidget extends StatefulWidget {
   final String label;
   final String text;
   final ValueChanged<String> onChanged;
+  final String hint;
+  final String? Function(String?)? validator;
 
   const TextFieldWidget({
-    Key? key,
+    super.key,
     this.maxLines = 1,
+    this.validator,
     required this.label,
     required this.text,
     required this.onChanged,
     required bool readonly,
-  }) : super(key: key);
+    this.hint = '',
+  });
 
   @override
   TextFieldWidgetState createState() => TextFieldWidgetState();
@@ -37,24 +43,32 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.label,
-              style:
-                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 16)),
-          Space(4),
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(9),
-              borderSide: const BorderSide(
-                  width: 0.3, color: Color.fromARGB(255, 35, 35, 35)),
-            )),
-            maxLines: widget.maxLines,
-            onChanged: widget.onChanged,
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(widget.label,
+            style:
+                const TextStyle(fontWeight: FontWeight.normal, fontSize: 16)),
+        const Space(4),
+        TextFormField(
+          controller: controller,
+          validator: widget.validator,
+          decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(9),
+            borderSide: const BorderSide(
+                width: 0.3, color: Color.fromARGB(255, 35, 35, 35)),
+          )),
+          maxLines: widget.maxLines,
+          onChanged: widget.onChanged,
+        ),
+        if (widget.hint.isNotEmpty)
+          Text(
+            widget.hint,
+            style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
           ),
-        ],
-      );
+      ],
+    );
+  }
 }

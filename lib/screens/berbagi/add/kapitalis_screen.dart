@@ -16,16 +16,26 @@ import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
+import 'package:kms_bpkp_mobile/models/api_tenaga_ahli_model.dart';
+import 'package:kms_bpkp_mobile/models/common_model.dart';
 import 'package:kms_bpkp_mobile/models/page_input_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
 import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:kms_bpkp_mobile/utils.dart';
+import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multiple_search.dart';
 import 'package:kms_bpkp_mobile/wigets/upload_button_widget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-class KiatScreen extends StatefulWidget {
-  const KiatScreen(
+class FileData {
+  final int urutan;
+  final File file;
+
+  FileData({required this.urutan, required this.file});
+}
+
+class KapitalisKnowlegeScreen extends StatefulWidget {
+  const KapitalisKnowlegeScreen(
       {super.key,
       required this.title,
       required this.id_jenis,
@@ -36,13 +46,13 @@ class KiatScreen extends StatefulWidget {
   final String sub_jenis_pengethuan;
   final int id_sub_jenis_pengetahuan;
   @override
-  State<KiatScreen> createState() => _KiatScreenState();
+  State<KapitalisKnowlegeScreen> createState() =>
+      _KapitalisKnowlegeScreenState();
 }
 
-class _KiatScreenState extends State<KiatScreen> {
+class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
   final _formKey = GlobalKey<FormState>();
-  List<Widget> referensiWidgets = <Widget>[];
-  List<Widget> penulisWidgets = <Widget>[];
+
   List<Widget> hashtagWidgets = <Widget>[];
   List<Widget> documentWidgets2 = <Widget>[];
   List<SubJenisPengetahuanResult> subJenisPengetahuan = [];
@@ -55,32 +65,33 @@ class _KiatScreenState extends State<KiatScreen> {
   List<String> hashtag = <String>[];
   List<File> document = <File>[];
   List<LingkupPengetahuanResult> lingkupPengetahuanResult = [];
+  List<TenagaAhliResult> tenagaAhliResult = [];
+  List<OptionsModel> _selectedReferensi = [];
+  List<OptionsModel> _selectedPenulis = [];
+
+  List<FileData> docs = [];
 
   String file_gambar = "Pilih Gambar";
   List<String> file_dokumen = [];
 
   List<File> file_gambar_send = [];
-  List<File> file_docs_send = [];
-
-  int file_gambar_id = 0;
-  List<int> file_dokumen_id = [];
 
   var _judul = "";
   var _ringkasan = "";
-  var _masalah = "";
-  var _dampak = "";
-  var _penyebab = "";
-  var _solusi = "";
-  var _hasil_perbaikan = "";
+  var _pembahasan = "";
+  var _hipotesis = "";
+  var _latar_belakang = "";
+  var _kesimpulan_rekomendasi = "";
+  var _penelitian_terdahulu = "";
   var _lingkup_pengetahuan = "";
+  var _pengujian = "";
+  var _status_pengetahuan = "";
 
   @override
   void initState() {
     setState(() {
       file_gambar_send.add(File(""));
-      file_docs_send.add(File(""));
-      referensiWidgets.add(_referensi());
-      penulisWidgets.add(_penulis());
+
       hashtagWidgets.add(_hashtag());
     });
 
@@ -90,9 +101,7 @@ class _KiatScreenState extends State<KiatScreen> {
 
   void _addDoc() {
     setState(() {
-      windex_document++;
       file_dokumen.add("Pilih Dokumen");
-      documentSelected.add(File(""));
     });
   }
 
@@ -101,38 +110,6 @@ class _KiatScreenState extends State<KiatScreen> {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
 
-      //REFERENSI
-      List<Map<dynamic, dynamic>> referensi_send = [];
-      List<String> referensi_send_api = [];
-      for (int i = 0; i < referensiWidgets.length; i++) {
-        var refName = referensiSelected[i];
-        var refId = 0;
-        for (var element in referensiResult) {
-          if (element.referensi == refName) {
-            refId = element.id;
-            referensi_send.add({"id": refId});
-          }
-        }
-        if (refId == 0) {
-          referensi_send_api.add(refName);
-        }
-      }
-      //PENULIS
-      var penulis_send = [];
-      List<String> penulis_send_api = [];
-      for (int i = 0; i < penulisWidgets.length; i++) {
-        var penName = penulisSelected[i];
-        var penId = 0;
-        for (var element in penulisResult) {
-          if (element.namaLengkap == penName) {
-            penId = element.id;
-            penulis_send.add({"id": penId});
-          }
-        }
-        if (penId == 0) {
-          penulis_send_api.add(penName);
-        }
-      }
       //HASHTAG
       var hashtag_send = [];
       List<String> hashtag_send_api = [];
@@ -149,37 +126,23 @@ class _KiatScreenState extends State<KiatScreen> {
           hashtag_send_api.add(hasName);
         }
       }
-      //DOCUMENT
-      List<File> document_send_api = [];
-      for (int i = 0; i <= documentWidgets2.length; i++) {
-        File docFile = documentSelected[i];
-        document_send_api.add(docFile);
-      }
 
       try {
-        //SEND REFERENSI
-        var value_ref = await InputPengetahuanService()
-            .submitNewReferensi(referensi_send_api);
-
-        for (var referensi in value_ref!) {
-          referensi_send.add({"id": referensi});
-        }
-
         var value_hastag =
             await InputPengetahuanService().submitNewHashTag(hashtag_send_api);
         for (var hastag in value_hastag!) {
           hashtag_send.add({"id": hastag});
         }
-        // print("file_gambar_send");
-        List<PostAttachModel>? value_gambar = await InputPengetahuanService()
-            .submitNewKnowledgeAttachment(file_gambar_send);
+
+        docs.sort((a, b) => a.urutan.compareTo(b.urutan));
+        if (docs.where((doc) => doc.urutan == 0).isEmpty) {
+          throw 'Silahkan unggah gambar!';
+        }
+
+        List<File> docs_send = docs.map((doc) => doc.file).toList();
 
         List<PostAttachModel>? value_dokumen = await InputPengetahuanService()
-            .submitNewKnowledgeAttachment(file_docs_send);
-
-        // for (int i = 0; i < value_ref!.length; i++) {
-        //   penulis_send.add({"id": value_ref[i]});
-        // }
+            .submitNewKnowledgeAttachment(docs_send);
 
         Map req = {
           "jenis_pengetahuan": {"id": widget.id_jenis.toString()},
@@ -187,33 +150,45 @@ class _KiatScreenState extends State<KiatScreen> {
             "id": widget.id_sub_jenis_pengetahuan.toString()
           },
           "judul": _judul,
-          // "ringkasan": ringkasan,
-          "referensi": referensi_send,
-          "masalah": _masalah,
-          "dampak": _dampak,
-          "penyebab": _penyebab,
-          "solusi": _solusi,
-          "hasil_perbaikan": _hasil_perbaikan,
+          "ringkasan": _ringkasan,
+          "referensi": _selectedReferensi
+              .map((x) => ({"id": x.value.toString()}))
+              .toList(),
           // "penulis_1": {"id": 1},
+          "latar_belakang": _latar_belakang,
           "tag": hashtag_send,
-          "thumbnail": {"id": value_gambar?[0].id},
-          "dokumen": {"id": value_dokumen?[0].id},
+          "kesimpulan_rekomendasi": _kesimpulan_rekomendasi,
+          "pembahasan": _pembahasan,
+          "hipotesis": _hipotesis,
+          "penelitian_terdahulu": _penelitian_terdahulu,
+          "pengujian": _pengujian,
+          "thumbnail": {"id": value_dokumen![0].id.toString()},
+          "dokumen": value_dokumen
+              .where((item) => value_dokumen.indexOf(item) != 0)
+              .map((item) => ({"id": item.id.toString()}))
+              .toList(),
           "lingkup_pengetahuan": {"id": _lingkup_pengetahuan},
-          "kompetensi": {}
+          "kompetensi": {},
+          "status_pengetahuan": _status_pengetahuan
         };
+
+        int i = 0;
+        for (var penulis in _selectedPenulis) {
+          req['penulis_$i'] = {"id": penulis.value?.toString()};
+          i++;
+        }
 
         var submitPengetahuan =
             await InputPengetahuanService().submitNewKnowledge(req);
 
-        // print(submitPengetahuan);
         toasty(context, "SUCCESS!");
         finish(context);
       } catch (e) {
         print(e);
-        toasty(context, "error!! ${e.toString()}");
+        toasty(context, "${e.toString()}");
       }
     } else {
-      toasty(context, "1 : " + "validate!!");
+      toasty(context, "Silahkan periksa form anda!!");
     }
   }
 
@@ -256,6 +231,16 @@ class _KiatScreenState extends State<KiatScreen> {
             }
             lingkupPengetahuanResult =
                 snapshot.data!.lingkupPengetahuanModel.results;
+            tenagaAhliResult = snapshot.data!.tenagaAhliModel.results;
+            List<OptionsModel> optionsReferensi = referensiResult
+                .map((ref) => OptionsModel(label: ref.referensi, value: ref.id))
+                .toList();
+
+            List<OptionsModel> optionsPenulis = snapshot
+                .data!.penulisModel.results
+                .map((p) => OptionsModel(label: p.namaLengkap, value: p.id))
+                .toList();
+
             //Lingkup Pengetahuan
 
             return Scaffold(
@@ -282,8 +267,8 @@ class _KiatScreenState extends State<KiatScreen> {
                         TextFieldWidget(
                           label: "Judul Pengetahuan",
                           text: _judul,
-                          readonly: false,
                           validator: ValidationBuilder(locale: locale).build(),
+                          readonly: false,
                           onChanged: (value) {
                             setState(() {
                               _judul = value;
@@ -294,9 +279,9 @@ class _KiatScreenState extends State<KiatScreen> {
                         TextFieldWidget(
                           label: "Ringkasan",
                           text: _ringkasan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
-                          validator: ValidationBuilder(locale: locale).build(),
                           onChanged: (value) {
                             setState(() {
                               _ringkasan = value;
@@ -305,131 +290,133 @@ class _KiatScreenState extends State<KiatScreen> {
                         ),
 
                         15.height,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: referensiWidgets,
-                        ),
-                        // FastAutocomplete<String>(
-                        //   name: 'referensi',
-                        //   labelText: 'Referensi',
-                        //   options: referensi,
-                        // ),
+                        CustomDropdownMultipleSearch(
+                            label: 'Referensi *',
+                            options: optionsReferensi,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Referensi wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedReferensi = data;
+                              });
+                            },
+                            selectedItems: _selectedReferensi),
                         15.height,
-                        ElevatedButton(
-                          onPressed: () {
+                        TextFieldWidget(
+                          label: "Latar Belakang",
+                          text: _latar_belakang,
+                          maxLines: 5,
+                          validator: ValidationBuilder(locale: locale).build(),
+                          readonly: false,
+                          onChanged: (value) {
                             setState(() {
-                              referensiWidgets.add(_referensi());
+                              _latar_belakang = value;
                             });
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent.withOpacity(0),
-                            side: const BorderSide(
-                              width: 0,
-                              color: Colors.transparent,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.add_rounded,
-                                  color: Colors.blue, size: 20),
-                              6.width,
-                              const text.Text(
-                                "Tambah Referensi",
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            ],
-                          ),
                         ),
                         15.height,
-                        const text.Text(
-                          "PERMASALAHAN",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        TextFieldWidget(
+                          label: "Penelitian Terdahulu",
+                          text: _penelitian_terdahulu,
+                          validator: ValidationBuilder(locale: locale).build(),
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _penelitian_terdahulu = value;
+                            });
+                          },
                         ),
-                        10.height,
+
+                        15.height,
+                        TextFieldWidget(
+                          label: "Hipotesis",
+                          hint:
+                              "*Apabila kualitatif tidak perlu Hipotesis, Metodologi, Data dan Ukurannya",
+                          text: _hipotesis,
+                          validator: ValidationBuilder(locale: locale).build(),
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _hipotesis = value;
+                            });
+                          },
+                        ),
+
+                        15.height,
                         // const text.Text(
                         //   "Masalah",
                         //   style: TextStyle(fontSize: 16),
                         // ),
                         5.height,
                         TextFieldWidget(
-                          label: "Masalah",
-                          text: _masalah,
+                          label: "Pengujian/Analisis Data",
+                          text: _pengujian,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
-                          validator: ValidationBuilder(locale: locale).build(),
                           onChanged: (value) {
                             setState(() {
-                              _masalah = value;
-                            });
-                          },
-                        ),
-                        // _quill_toolbar(_masalah_controller),
-                        // _quill_editor(_masalah_controller),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Dampak",
-                          text: _dampak,
-                          maxLines: 5,
-                          readonly: false,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          onChanged: (value) {
-                            setState(() {
-                              _dampak = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Penyebab",
-                          text: _penyebab,
-                          maxLines: 5,
-                          readonly: false,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          onChanged: (value) {
-                            setState(() {
-                              _penyebab = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Solusi",
-                          text: _solusi,
-                          maxLines: 5,
-                          readonly: false,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          onChanged: (value) {
-                            setState(() {
-                              _solusi = value;
+                              _pengujian = value;
                             });
                           },
                         ),
 
+                        15.height,
                         TextFieldWidget(
-                          label: "Syarat dan Hasil",
+                          label: "Pembahasan",
+                          text: _pembahasan,
                           validator: ValidationBuilder(locale: locale).build(),
-                          text: _hasil_perbaikan,
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
-                              _hasil_perbaikan = value;
+                              _pembahasan = value;
                             });
                           },
                         ),
                         15.height,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: penulisWidgets,
+                        TextFieldWidget(
+                          label: "Kesimpulan dan Rekomendasi",
+                          text: _kesimpulan_rekomendasi,
+                          validator: ValidationBuilder(locale: locale).build(),
+                          maxLines: 5,
+                          readonly: false,
+                          onChanged: (value) {
+                            setState(() {
+                              _kesimpulan_rekomendasi = value;
+                            });
+                          },
                         ),
                         15.height,
+                        const text.Text(
+                          "PENULIS PENGETAHUAN",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        10.height,
+                        CustomDropdownMultipleSearch(
+                            label: "Nama Penulis *",
+                            options: optionsPenulis,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Nama Penulis wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
+                            onChanged: (data) {
+                              setState(() {
+                                _selectedPenulis = data;
+                              });
+                            },
+                            selectedItems: _selectedPenulis),
+                        15.height,
+
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -471,21 +458,49 @@ class _KiatScreenState extends State<KiatScreen> {
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        10.height,
                         15.height,
+
                         UploadButtonWidget(
                           label: 'File Gambar *',
                           allowedExtensions: const ['jpg', 'png', 'jpeg'],
                           onChanged: (file) {
-                            file_gambar_send[0] = file;
+                            docs.add(FileData(urutan: 0, file: file));
                           },
                         ),
                         15.height,
                         UploadButtonWidget(
-                          label: 'File Dokumen *',
-                          allowedExtensions: const ['pdf'],
+                          label: 'File Dokumen',
+                          allowedExtensions: const ['pdf', 'docx'],
                           onChanged: (file) {
-                            file_docs_send[0] = file;
+                            docs.add(FileData(urutan: 1, file: file));
+                          },
+                        ),
+                        15.height,
+                        const text.Text(
+                          "Status Pengetahuan",
+                          style: TextStyle(fontSize: 16, color: textColor),
+                          textAlign: TextAlign.start,
+                        ),
+                        5.height,
+                        DropdownButtonFormField<String>(
+                          validator: ValidationBuilder(locale: locale).build(),
+                          items: ["1", "2"]
+                              .map<DropdownMenuItem<String>>((status) {
+                            return DropdownMenuItem(
+                              value: status,
+                              child: text.Text(
+                                status == "1" ? "Aktif" : "Tidak Aktif",
+                                style: const TextStyle(
+                                    fontSize: 16, color: textColor),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              _status_pengetahuan = value ?? "";
+                              // _selectedJenisPengetahuan = value!;
+                            });
+                            // _kategori = value!;
                           },
                         ),
                         15.height,
@@ -602,7 +617,16 @@ class _KiatScreenState extends State<KiatScreen> {
                   ),
                 ),
               ).expand(),
-             
+              // Container(
+              //   margin: const EdgeInsets.only(top: 0),
+              //   child: IconBtnWithCounter(
+              //     svgSrc: "assets/icons/bell2.svg",
+              //     numOfitem: "10", //notifCounter,
+              //     press: () {
+              //       Navigator.pushNamed(context, notificationRoute);
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -621,7 +645,6 @@ class _KiatScreenState extends State<KiatScreen> {
       children: [
         15.height,
         FastAutocomplete<String>(
-          validator: ValidationBuilder(locale: locale).build(),
           name: 'referensi',
           labelText: 'Referensi',
           options: referensi,
@@ -642,40 +665,6 @@ class _KiatScreenState extends State<KiatScreen> {
     );
   }
 
-  int windex_penulias = 0;
-  var penulisSelected = <String>[];
-  Widget _penulis() {
-    setState(() {
-      windex_penulias++;
-      penulisSelected.add("");
-    });
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        // 15.height,
-        FastAutocomplete<String>(
-          name: 'penulis',
-          labelText: 'Penulis',
-          options: penulis,
-          initialValue:
-              TextEditingValue(text: penulisSelected[windex_penulias - 1]),
-          onChanged: (value) {
-            setState(() {
-              penulisSelected[windex_penulias - 1] = value!;
-            });
-          },
-          onSelected: (option) {
-            setState(() {
-              penulisSelected[windex_penulias - 1] = option;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
   int windex_hastag = 0;
   var hastagSelected = <String>[];
   Widget _hashtag() {
@@ -687,10 +676,10 @@ class _KiatScreenState extends State<KiatScreen> {
       children: [
         15.height,
         FastAutocomplete<String>(
-          validator: ValidationBuilder(locale: locale).build(),
           name: 'hastag',
           labelText: 'Hastag',
           options: hashtag,
+          validator: ValidationBuilder(locale: locale).build(),
           initialValue:
               TextEditingValue(text: hastagSelected[windex_hastag - 1]),
           onChanged: (value) {
@@ -707,8 +696,4 @@ class _KiatScreenState extends State<KiatScreen> {
       ],
     );
   }
-
-  int windex_document = -1;
-  var documentSelected = <File>[];
-
 }

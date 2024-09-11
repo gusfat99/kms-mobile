@@ -6,8 +6,10 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/text.dart' as text;
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:kms_bpkp_mobile/colors.dart';
 import 'package:kms_bpkp_mobile/helpers/loading_screen.dart';
+import 'package:kms_bpkp_mobile/helpers/my_validation_locale.dart';
 import 'package:kms_bpkp_mobile/helpers/text_field_widget.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
 import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
@@ -53,7 +55,7 @@ class TugasScreen extends StatefulWidget {
 class _TugasScreenState extends State<TugasScreen> {
   final _formKey = GlobalKey<FormState>();
   List<Widget> referensiWidgets = <Widget>[];
-  List<Widget> penulisWidgets = <Widget>[];
+
   List<Widget> hashtagWidgets = <Widget>[];
   List<Widget> documentWidgets2 = <Widget>[];
   List<SubJenisPengetahuanResult> subJenisPengetahuan = [];
@@ -100,7 +102,7 @@ class _TugasScreenState extends State<TugasScreen> {
       file_gambar_send.add(File(""));
 
       referensiWidgets.add(_referensi());
-      penulisWidgets.add(_penulis());
+
       hashtagWidgets.add(_hashtag());
     });
 
@@ -160,12 +162,12 @@ class _TugasScreenState extends State<TugasScreen> {
 
         Map req = {
           "jenis_pengetahuan": {"id": widget.id_jenis.toString()},
-          "subjenis_pengetahuan": {
-            "id": widget.id_sub_jenis_pengetahuan.toString()
-          },
+          "subjenis_pengetahuan": {"id": "1"},
           "judul": _judul,
           "ringkasan": _ringkasan,
-          "referensi": _selectedReferensi.map((x) => x.value).toList(),
+          "referensi": _selectedReferensi
+              .map((x) => ({"id": x.value.toString()}))
+              .toList(),
           "tujuan": _tujuan,
           "dasar_hukum": _dasar_hukum,
           "proses_bisnis": _proses_bisnis,
@@ -177,20 +179,22 @@ class _TugasScreenState extends State<TugasScreen> {
           "data_digunakan": _data_digunakan,
           // "penulis_1": {"id": 1},
           "tag": hashtag_send,
-          "tenaga_ahli": _selectedTenagaAhli.map((x) => x.value).toList(),
-          "pedoman": _selectedPedoman.map((x) => x.value).toList(),
-          "thumbnail": {"id": value_dokumen![0].id},
+          "tenaga_ahli":
+              _selectedTenagaAhli.map((x) => ({"id": x.value})).toList(),
+          "pedoman": _selectedPedoman.map((x) => ({"id": x.value})).toList(),
+          "thumbnail": {"id": value_dokumen![0].id.toString()},
           "dokumen": value_dokumen
               .where((item) => value_dokumen.indexOf(item) != 0)
-              .toList()
-              .map((item) => ({"id": item.id})),
+              .map((item) => ({"id": item.id.toString()}))
+              .toList(),
           "lingkup_pengetahuan": {"id": _lingkup_pengetahuan},
           "kompetensi": {},
           "status_pengetahuan": _status_pengetahuan
         };
+
         int i = 0;
         for (var penulis in _selectedPenulis) {
-          req['penulis_$i'] = penulis.value;
+          req['penulis_$i'] = {"id": penulis.value?.toString()};
           i++;
         }
 
@@ -204,9 +208,11 @@ class _TugasScreenState extends State<TugasScreen> {
         toasty(context, "error!! ${e.toString()}");
       }
     } else {
-      toasty(context, "1 : " + "validate!!");
+      toasty(context, "Silahkan Periksa Form anda!");
     }
   }
+
+  final locale = MyValidationLocale();
 
   @override
   Widget build(BuildContext context) {
@@ -296,6 +302,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         15.height,
                         TextFieldWidget(
                           label: "Judul Pengetahuan",
+                          validator: ValidationBuilder(locale: locale).build(),
                           text: _judul,
                           readonly: false,
                           onChanged: (value) {
@@ -307,6 +314,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         15.height,
                         TextFieldWidget(
                           label: "Ringkasan",
+                          validator: ValidationBuilder(locale: locale).build(),
                           text: _ringkasan,
                           maxLines: 5,
                           readonly: false,
@@ -321,6 +329,12 @@ class _TugasScreenState extends State<TugasScreen> {
                         CustomDropdownMultipleSearch(
                             label: 'Referensi *',
                             options: optionsReferensi,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Referensi wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
                             onChanged: (data) {
                               setState(() {
                                 _selectedReferensi = data;
@@ -343,6 +357,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Tujuan Penugasan",
                           text: _tujuan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -357,6 +372,7 @@ class _TugasScreenState extends State<TugasScreen> {
                           label: "Dasar Hukum",
                           text: _dasar_hukum,
                           maxLines: 5,
+                          validator: ValidationBuilder(locale: locale).build(),
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
@@ -368,6 +384,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Proses Bisnis Objek Pengawasan",
                           text: _proses_bisnis,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -380,6 +397,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Rumusan Masalah",
                           text: _rumusan_masalah,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -392,6 +410,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Risiko Objek Pengawasan",
                           text: _risiko_objek_pengawasan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -404,6 +423,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Metode Pengawasan",
                           text: _metode_pengawasan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -416,6 +436,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Temuan Material/Berulang",
                           text: _temuan_material,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -429,6 +450,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Keahlian Dibutuhkan",
                           text: _keahlian_dibutuhkan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -441,6 +463,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         TextFieldWidget(
                           label: "Data yang Digunakan",
                           text: _data_digunakan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -454,6 +477,12 @@ class _TugasScreenState extends State<TugasScreen> {
                         CustomDropdownMultipleSearch(
                             label: "Tenaga Ahli BPKP yang Tersedia *",
                             options: optionsTenagaAhli,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Tenaga Ahli BPKP yang Tersedia wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
                             onChanged: (data) {
                               _selectedTenagaAhli = data;
                             },
@@ -462,6 +491,12 @@ class _TugasScreenState extends State<TugasScreen> {
                         CustomDropdownMultipleSearch(
                             label: "Pedoman *",
                             options: optionsPedoman,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Pedoman wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
                             onChanged: (data) {
                               setState(() {
                                 _selectedPedoman = data;
@@ -478,6 +513,12 @@ class _TugasScreenState extends State<TugasScreen> {
                         CustomDropdownMultipleSearch(
                             label: "Nama Penulis *",
                             options: optionsPenulis,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Nama Penulis wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
                             onChanged: (data) {
                               setState(() {
                                 _selectedPenulis = data;
@@ -488,6 +529,12 @@ class _TugasScreenState extends State<TugasScreen> {
                         CustomDropdownMultipleSearch(
                             label: "Narasumber *",
                             options: optionsNarsum,
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Narasumber wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
                             onChanged: (data) {
                               setState(() {
                                 _selectedNarasumer = data;
@@ -497,6 +544,12 @@ class _TugasScreenState extends State<TugasScreen> {
                         15.height,
                         CustomDropdownMultipleSearch(
                             label: "Penerbit *",
+                            validator: (items) {
+                              if (items == null || items.isEmpty) {
+                                return "Penerbit wajib diisi minimal 1";
+                              }
+                              return null;
+                            },
                             options: optionsPenerbit,
                             onChanged: (data) {
                               setState(() {
@@ -587,6 +640,7 @@ class _TugasScreenState extends State<TugasScreen> {
                         ),
                         5.height,
                         DropdownButtonFormField<String>(
+                          validator: ValidationBuilder(locale: locale).build(),
                           items: ["1", "2"]
                               .map<DropdownMenuItem<String>>((status) {
                             return DropdownMenuItem(
@@ -613,12 +667,13 @@ class _TugasScreenState extends State<TugasScreen> {
                           textAlign: TextAlign.start,
                         ),
                         5.height,
-                        DropdownButtonFormField<int>(
+                        DropdownButtonFormField<String>(
+                          validator: ValidationBuilder(locale: locale).build(),
                           items: lingkupPengetahuanResult
-                              .map<DropdownMenuItem<int>>(
+                              .map<DropdownMenuItem<String>>(
                                   (LingkupPengetahuanResult lingkup) {
                             return DropdownMenuItem(
-                              value: lingkup.id,
+                              value: lingkup.id.toString(),
                               child: text.Text(
                                 lingkup.nama,
                                 style: const TextStyle(
@@ -626,7 +681,7 @@ class _TugasScreenState extends State<TugasScreen> {
                               ),
                             );
                           }).toList(),
-                          onChanged: (int? value) {
+                          onChanged: (String? value) {
                             setState(() {
                               _lingkup_pengetahuan = value.toString();
                               // _selectedJenisPengetahuan = value!;
@@ -767,40 +822,6 @@ class _TugasScreenState extends State<TugasScreen> {
     );
   }
 
-  int windex_penulias = 0;
-  var penulisSelected = <String>[];
-  Widget _penulis() {
-    setState(() {
-      windex_penulias++;
-      penulisSelected.add("");
-    });
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        // 15.height,
-        FastAutocomplete<String>(
-          name: 'penulis',
-          labelText: 'Penulis',
-          options: penulis,
-          initialValue:
-              TextEditingValue(text: penulisSelected[windex_penulias - 1]),
-          onChanged: (value) {
-            setState(() {
-              penulisSelected[windex_penulias - 1] = value!;
-            });
-          },
-          onSelected: (option) {
-            setState(() {
-              penulisSelected[windex_penulias - 1] = option;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
   int windex_hastag = 0;
   var hastagSelected = <String>[];
   Widget _hashtag() {
@@ -813,6 +834,7 @@ class _TugasScreenState extends State<TugasScreen> {
         15.height,
         FastAutocomplete<String>(
           name: 'hastag',
+          validator: ValidationBuilder(locale: locale).build(),
           labelText: 'Hastag',
           options: hashtag,
           initialValue:
