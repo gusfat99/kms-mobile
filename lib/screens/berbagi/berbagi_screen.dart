@@ -8,6 +8,7 @@ import 'package:kms_bpkp_mobile/models/page_berbagi_model.dart';
 import 'package:kms_bpkp_mobile/routes.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/kapitalis_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/kiat_screen.dart';
+import 'package:kms_bpkp_mobile/screens/berbagi/add/resensi_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/tugas_screen.dart';
 import 'package:kms_bpkp_mobile/screens/knowledge/api/knowledge_api.dart';
 import 'package:kms_bpkp_mobile/size.dart';
@@ -110,12 +111,13 @@ class _BerbagiScreenState extends State<BerbagiScreen> {
                             .launch(context);
                         break;
                       case "4": //Resensi
-                        // ResensiScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
+                        ResensiKnowlegeScreen(
+                                title: _jenis_pengetahuan,
+                                id_jenis: id_jenis,
+                                sub_jenis_pengethuan: subpengetahuan[i].nama,
+                                id_sub_jenis_pengetahuan: subpengetahuan[i].id)
+                            .launch(context);
+
                         break;
                       case "5": //Aksi Perubahan
                         // PerubahanScreen(

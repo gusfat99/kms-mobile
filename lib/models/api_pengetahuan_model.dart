@@ -104,7 +104,7 @@ class PengetahuanResult {
   int id;
   Pengetahuan jenisPengetahuan;
   String judul;
-  String jumlahHalaman;
+  int jumlahHalaman;
   String keahlianDibutuhkan;
   String kesimpulanRekomendasi;
   String latarBelakang;
@@ -128,7 +128,7 @@ class PengetahuanResult {
   Pengetahuan statusPengetahuan;
   Pengetahuan subjenisPengetahuan;
   String syaratHasil;
-  String tahunTerbit;
+  int tahunTerbit;
   String temuanMaterial;
   Thumbnail thumbnail;
   String tujuan;
@@ -190,7 +190,7 @@ class PengetahuanResult {
         id: json["id"] ?? 0,
         jenisPengetahuan: Pengetahuan.fromJson(json["jenis_pengetahuan"]),
         judul: json["judul"] ?? "",
-        jumlahHalaman: json["jumlah_halaman"] ?? "",
+        jumlahHalaman: json["jumlah_halaman"] ?? 0,
         keahlianDibutuhkan: json["keahlian_dibutuhkan"] ?? "",
         kesimpulanRekomendasi: json["kesimpulan_rekomendasi"] ?? "",
         latarBelakang: json["latar_belakang"] ?? "",
@@ -214,7 +214,7 @@ class PengetahuanResult {
         statusPengetahuan: Pengetahuan.fromJson(json["status_pengetahuan"]),
         subjenisPengetahuan: Pengetahuan.fromJson(json["subjenis_pengetahuan"]),
         syaratHasil: json["syarat_hasil"] ?? "",
-        tahunTerbit: json["tahun_terbit"] ?? "",
+        tahunTerbit: json["tahun_terbit"] ?? 0,
         temuanMaterial: json["temuan_material"] ?? "",
         thumbnail: Thumbnail.fromJson(json["thumbnail"]),
         tujuan: json["tujuan"] ?? "",
@@ -225,9 +225,9 @@ class PengetahuanResult {
   Map<String, dynamic> toJson() => {
         "created_at": createdAt,
         "created_by": createdBy.toJson(),
-        "dampak": dampak == null ? null : dampak,
-        "dasar_hukum": dasarHukum == null ? null : dasarHukum,
-        "data_digunakan": dataDigunakan == null ? null : dataDigunakan,
+        "dampak": dampak,
+        "dasar_hukum": dasarHukum,
+        "data_digunakan": dataDigunakan,
         "deleted_by": deletedBy.toJson(),
         "hipotesis": hipotesis,
         "id": id,
@@ -235,12 +235,12 @@ class PengetahuanResult {
         "judul": judul,
         "jumlah_halaman": jumlahHalaman,
         "keahlian_dibutuhkan":
-            keahlianDibutuhkan == null ? null : keahlianDibutuhkan,
+            keahlianDibutuhkan,
         "kesimpulan_rekomendasi": kesimpulanRekomendasi,
         "latar_belakang": latarBelakang,
         "lesson_learned": lessonLearned,
         "lingkup_pengetahuan": lingkupPengetahuan.toJson(),
-        "masalah": masalah == null ? null : masalah,
+        "masalah": masalah,
         "metode_pengawasan": metodePengawasan,
         "pembahasan": pembahasan,
         "penelitian_terdahulu": penelitianTerdahulu,
@@ -248,21 +248,21 @@ class PengetahuanResult {
         "penulis_1": penulis1.toJson(),
         "penulis_2": penulis2.toJson(),
         "penulis_3": penulis3.toJson(),
-        "penyebab": penyebab == null ? null : penyebab,
+        "penyebab": penyebab,
         "proses_bisnis": prosesBisnis,
         "ringkasan": ringkasan,
         "risiko_objek_pengawasan":
-            risikoObjekPengawasan == null ? null : risikoObjekPengawasan,
-        "rumusan_masalah": rumusanMasalah == null ? null : rumusanMasalah,
-        "solusi": solusi == null ? null : solusi,
+            risikoObjekPengawasan,
+        "rumusan_masalah": rumusanMasalah,
+        "solusi": solusi,
         "statistik": statistik.toJson(),
         "status_pengetahuan": statusPengetahuan.toJson(),
         "subjenis_pengetahuan": subjenisPengetahuan.toJson(),
         "syarat_hasil": syaratHasil,
         "tahun_terbit": tahunTerbit,
-        "temuan_material": temuanMaterial == null ? null : temuanMaterial,
+        "temuan_material": temuanMaterial,
         "thumbnail": thumbnail.toJson(),
-        "tujuan": tujuan == null ? null : tujuan,
+        "tujuan": tujuan,
         "updated_at": updatedAt,
         "updated_by": updatedBy.toJson(),
       };

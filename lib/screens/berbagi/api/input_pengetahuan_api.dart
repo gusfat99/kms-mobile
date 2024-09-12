@@ -25,7 +25,6 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     Map<String, String> apiParam = {};
-    Map<String, String> apiParamPengetahuan = {};
     //SUB JENIS PENGETAHUAN
     var resultSubJenisPengetahuan = await handleResponse(
         await getRequest(pengetahuanSubJenisEp, apiParam, token!));
@@ -33,8 +32,6 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     //REFERENSI
     var resultReferensi =
         await handleResponse(await getRequest(referensiEp, apiParam, token));
-    var pengetahaun = await handleResponse(
-        await getRequest(pengetahuanEp, apiParamPengetahuan, token));
     
     //TENAGA AHLI
     var resultTenagaAhli =

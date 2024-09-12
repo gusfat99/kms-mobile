@@ -538,12 +538,8 @@ class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
                             handleSubmit();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
-                            side: const BorderSide(
-                              width: 1,
-                              color: Colors.green,
-                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

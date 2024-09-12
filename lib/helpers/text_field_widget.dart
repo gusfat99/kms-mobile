@@ -10,11 +10,15 @@ class TextFieldWidget extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final String hint;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final int? maxLength;
 
   const TextFieldWidget({
     super.key,
     this.maxLines = 1,
     this.validator,
+    this.maxLength,
+    this.keyboardType = TextInputType.text,
     required this.label,
     required this.text,
     required this.onChanged,
@@ -62,6 +66,8 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
           )),
           maxLines: widget.maxLines,
           onChanged: widget.onChanged,
+          keyboardType: widget.keyboardType,
+          maxLength: widget.maxLength,
         ),
         if (widget.hint.isNotEmpty)
           Text(
