@@ -66,7 +66,10 @@ class KnowledgeService implements KnowledgeApiService {
   Future<PageBerbagiModel> getJenisPengetahuan() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
-    Map<String, String> apiParam = {};
+    Map<String, String> apiParam = {
+      "\$is_disable_pagination": "true",
+      "is_show.\$eq": "true"
+    };
     var jenisPengetahuanResult = await handleResponse(
         await getRequest(pengetahuanJenisEp, apiParam, token!));
     var subJenisPengetahuanResult = await handleResponse(

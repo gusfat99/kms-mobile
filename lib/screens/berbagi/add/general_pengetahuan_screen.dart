@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/text.dart' as text;
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
@@ -13,10 +12,10 @@ import 'package:kms_bpkp_mobile/helpers/my_validation_locale.dart';
 import 'package:kms_bpkp_mobile/helpers/text_field_widget.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
 import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
+import 'package:kms_bpkp_mobile/models/api_penerbit_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
-import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_tenaga_ahli_model.dart';
 import 'package:kms_bpkp_mobile/models/common_model.dart';
@@ -25,9 +24,7 @@ import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
 import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:kms_bpkp_mobile/utils.dart';
-import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multi_select.dart';
 import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multiple_search.dart';
-import 'package:kms_bpkp_mobile/wigets/custom_popup_item_select.dart';
 import 'package:kms_bpkp_mobile/wigets/upload_button_widget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -38,8 +35,8 @@ class FileData {
   FileData({required this.urutan, required this.file});
 }
 
-class TugasScreen extends StatefulWidget {
-  const TugasScreen(
+class GeneralKnowlegeScreen extends StatefulWidget {
+  const GeneralKnowlegeScreen(
       {super.key,
       required this.title,
       required this.id_jenis,
@@ -50,17 +47,17 @@ class TugasScreen extends StatefulWidget {
   final String sub_jenis_pengethuan;
   final int id_sub_jenis_pengetahuan;
   @override
-  State<TugasScreen> createState() => _TugasScreenState();
+  State<GeneralKnowlegeScreen> createState() => _GeneralKnowlegeScreenState();
 }
 
-class _TugasScreenState extends State<TugasScreen> {
+class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
   final _formKey = GlobalKey<FormState>();
-  List<Widget> referensiWidgets = <Widget>[];
 
   List<Widget> hashtagWidgets = <Widget>[];
   List<Widget> documentWidgets2 = <Widget>[];
   List<SubJenisPengetahuanResult> subJenisPengetahuan = [];
   List<PengetahuanResult> referensiResult = [];
+  List<PenerbitResult> penerbitResult = [];
   List<PenulisResult> penulisResult = [];
   List<HashTagResult> hashtagResult = [];
   List<String> subJenis = <String>[];
@@ -70,12 +67,9 @@ class _TugasScreenState extends State<TugasScreen> {
   List<File> document = <File>[];
   List<LingkupPengetahuanResult> lingkupPengetahuanResult = [];
   List<TenagaAhliResult> tenagaAhliResult = [];
-  List<OptionsModel> _selectedTenagaAhli = [];
-  List<OptionsModel> _selectedPedoman = [];
   List<OptionsModel> _selectedReferensi = [];
   List<OptionsModel> _selectedPenulis = [];
-  List<OptionsModel> _selectedNarasumer = [];
-  List<OptionsModel> _selectedPenerbit = [];
+
   List<FileData> docs = [];
 
   String file_gambar = "Pilih Gambar";
@@ -85,24 +79,13 @@ class _TugasScreenState extends State<TugasScreen> {
 
   var _judul = "";
   var _ringkasan = "";
-  var _tujuan = "";
-  var _dasar_hukum = "";
-  var _proses_bisnis = "";
-  var _rumusan_masalah = "";
-  var _risiko_objek_pengawasan = "";
-  var _metode_pengawasan = "";
-  var _temuan_material = "";
   var _lingkup_pengetahuan = "";
-  var _keahlian_dibutuhkan = "";
-  var _data_digunakan = "";
   var _status_pengetahuan = "";
 
   @override
   void initState() {
     setState(() {
       file_gambar_send.add(File(""));
-
-      referensiWidgets.add(_referensi());
 
       hashtagWidgets.add(_hashtag());
     });
@@ -113,9 +96,7 @@ class _TugasScreenState extends State<TugasScreen> {
 
   void _addDoc() {
     setState(() {
-      windex_document++;
       file_dokumen.add("Pilih Dokumen");
-      documentSelected.add(File(""));
     });
   }
 
@@ -140,12 +121,6 @@ class _TugasScreenState extends State<TugasScreen> {
           hashtag_send_api.add(hasName);
         }
       }
-      //DOCUMENT
-      List<File> document_send_api = [];
-      for (int i = 0; i <= documentWidgets2.length; i++) {
-        File docFile = documentSelected[i];
-        document_send_api.add(docFile);
-      }
 
       try {
         var value_hastag =
@@ -155,6 +130,9 @@ class _TugasScreenState extends State<TugasScreen> {
         }
 
         docs.sort((a, b) => a.urutan.compareTo(b.urutan));
+        if (docs.where((doc) => doc.urutan == 0).isEmpty) {
+          throw 'Silahkan unggah gambar!';
+        }
 
         List<File> docs_send = docs.map((doc) => doc.file).toList();
 
@@ -163,33 +141,21 @@ class _TugasScreenState extends State<TugasScreen> {
 
         Map req = {
           "jenis_pengetahuan": {"id": widget.id_jenis.toString()},
-          "subjenis_pengetahuan": {"id": "1"},
+          "subjenis_pengetahuan": {
+            "id": widget.id_sub_jenis_pengetahuan.toString()
+          },
           "judul": _judul,
           "ringkasan": _ringkasan,
           "referensi_pengetahuan": _selectedReferensi
               .map((x) => ({"id": x.value.toString()}))
               .toList(),
-          "tujuan": _tujuan,
-          "dasar_hukum": _dasar_hukum,
-          "proses_bisnis": _proses_bisnis,
-          "rumusan_masalah": _rumusan_masalah,
-          "risiko_objek_pengawasan": _risiko_objek_pengawasan,
-          "metode_pengawasan": _metode_pengawasan,
-          "temuan_material": _temuan_material,
-          "keahlian_dibutuhkan": _keahlian_dibutuhkan,
-          "data_digunakan": _data_digunakan,
-          // "penulis_1": {"id": 1},
           "tag": hashtag_send,
-          "tenaga_ahli":
-              _selectedTenagaAhli.map((x) => ({"id": x.value})).toList(),
-          "pedoman": _selectedPedoman.map((x) => ({"id": x.value})).toList(),
           "thumbnail": {"id": value_dokumen![0].id.toString()},
           "dokumen": value_dokumen
               .where((item) => value_dokumen.indexOf(item) != 0)
               .map((item) => ({"id": item.id.toString()}))
               .toList(),
           "lingkup_pengetahuan": {"id": _lingkup_pengetahuan},
-          "kompetensi": {},
           "status_pengetahuan": _status_pengetahuan
         };
 
@@ -206,10 +172,10 @@ class _TugasScreenState extends State<TugasScreen> {
         finish(context);
       } catch (e) {
         print(e);
-        toasty(context, "error!! ${e.toString()}");
+        toasty(context, "${e.toString()}");
       }
     } else {
-      toasty(context, "Silahkan Periksa Form anda!");
+      toasty(context, "Silahkan periksa form anda!!");
     }
   }
 
@@ -237,8 +203,8 @@ class _TugasScreenState extends State<TugasScreen> {
             for (var i = 0; i < referensiResult.length; i++) {
               referensi.add(referensiResult[i].judul);
             }
-            //PENULIS
 
+            //PENULIS
             penulisResult = snapshot.data!.penulisModel.results;
             for (var i = 0; i < penulisResult.length; i++) {
               penulis.add(penulisResult[i].namaLengkap);
@@ -254,29 +220,14 @@ class _TugasScreenState extends State<TugasScreen> {
             lingkupPengetahuanResult =
                 snapshot.data!.lingkupPengetahuanModel.results;
             tenagaAhliResult = snapshot.data!.tenagaAhliModel.results;
+
             List<OptionsModel> optionsReferensi = referensiResult
                 .map((ref) => OptionsModel(label: ref.judul, value: ref.id))
                 .toList();
-            List<OptionsModel> optionsTenagaAhli = tenagaAhliResult
-                .map((tenaga) =>
-                    OptionsModel(label: tenaga.namaLengkap, value: tenaga.id))
-                .toList();
-            List<OptionsModel> optionsPedoman = snapshot
-                .data!.pedomanModel.results
-                .map((pedoman) =>
-                    OptionsModel(label: pedoman.nama, value: pedoman.id))
-                .toList();
+
             List<OptionsModel> optionsPenulis = snapshot
                 .data!.penulisModel.results
                 .map((p) => OptionsModel(label: p.namaLengkap, value: p.id))
-                .toList();
-            List<OptionsModel> optionsNarsum = snapshot
-                .data!.penulisModel.results
-                .map((p) => OptionsModel(label: p.namaLengkap, value: p.id))
-                .toList();
-            List<OptionsModel> optionsPenerbit = snapshot
-                .data!.penerbitModel.results
-                .map((p) => OptionsModel(label: p.namaPenerbit, value: p.id))
                 .toList();
 
             //Lingkup Pengetahuan
@@ -304,8 +255,8 @@ class _TugasScreenState extends State<TugasScreen> {
                         15.height,
                         TextFieldWidget(
                           label: "Judul Pengetahuan",
-                          validator: ValidationBuilder(locale: locale).build(),
                           text: _judul,
+                          validator: ValidationBuilder(locale: locale).build(),
                           readonly: false,
                           onChanged: (value) {
                             setState(() {
@@ -316,8 +267,8 @@ class _TugasScreenState extends State<TugasScreen> {
                         15.height,
                         TextFieldWidget(
                           label: "Ringkasan",
-                          validator: ValidationBuilder(locale: locale).build(),
                           text: _ringkasan,
+                          validator: ValidationBuilder(locale: locale).build(),
                           maxLines: 5,
                           readonly: false,
                           onChanged: (value) {
@@ -326,7 +277,6 @@ class _TugasScreenState extends State<TugasScreen> {
                             });
                           },
                         ),
-
                         15.height,
                         CustomDropdownMultipleSearch(
                             label: 'Referensi *',
@@ -343,168 +293,6 @@ class _TugasScreenState extends State<TugasScreen> {
                               });
                             },
                             selectedItems: _selectedReferensi),
-                        15.height,
-
-                        const text.Text(
-                          "PENUGASAN",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        10.height,
-                        // const text.Text(
-                        //   "Masalah",
-                        //   style: TextStyle(fontSize: 16),
-                        // ),
-                        5.height,
-                        TextFieldWidget(
-                          label: "Tujuan Penugasan",
-                          text: _tujuan,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _tujuan = value;
-                            });
-                          },
-                        ),
-
-                        15.height,
-                        TextFieldWidget(
-                          label: "Dasar Hukum",
-                          text: _dasar_hukum,
-                          maxLines: 5,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _dasar_hukum = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Proses Bisnis Objek Pengawasan",
-                          text: _proses_bisnis,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _proses_bisnis = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Rumusan Masalah",
-                          text: _rumusan_masalah,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _rumusan_masalah = value;
-                            });
-                          },
-                        ),
-
-                        TextFieldWidget(
-                          label: "Risiko Objek Pengawasan",
-                          text: _risiko_objek_pengawasan,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _risiko_objek_pengawasan = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Metode Pengawasan",
-                          text: _metode_pengawasan,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _metode_pengawasan = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Temuan Material/Berulang",
-                          text: _temuan_material,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _temuan_material = value;
-                            });
-                          },
-                        ),
-
-                        15.height,
-                        TextFieldWidget(
-                          label: "Keahlian Dibutuhkan",
-                          text: _keahlian_dibutuhkan,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _keahlian_dibutuhkan = value;
-                            });
-                          },
-                        ),
-                        15.height,
-                        TextFieldWidget(
-                          label: "Data yang Digunakan",
-                          text: _data_digunakan,
-                          validator: ValidationBuilder(locale: locale).build(),
-                          maxLines: 5,
-                          readonly: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _data_digunakan = value;
-                            });
-                          },
-                        ),
-                        15.height,
-
-                        CustomDropdownMultipleSearch(
-                            label: "Tenaga Ahli BPKP yang Tersedia *",
-                            options: optionsTenagaAhli,
-                            validator: (items) {
-                              if (items == null || items.isEmpty) {
-                                return "Tenaga Ahli BPKP yang Tersedia wajib diisi minimal 1";
-                              }
-                              return null;
-                            },
-                            onChanged: (data) {
-                              _selectedTenagaAhli = data;
-                            },
-                            selectedItems: _selectedTenagaAhli),
-                        15.height,
-                        CustomDropdownMultipleSearch(
-                            label: "Pedoman *",
-                            options: optionsPedoman,
-                            validator: (items) {
-                              if (items == null || items.isEmpty) {
-                                return "Pedoman wajib diisi minimal 1";
-                              }
-                              return null;
-                            },
-                            onChanged: (data) {
-                              setState(() {
-                                _selectedPedoman = data;
-                              });
-                            },
-                            selectedItems: _selectedPedoman),
                         15.height,
                         const text.Text(
                           "PENULIS PENGETAHUAN",
@@ -527,38 +315,6 @@ class _TugasScreenState extends State<TugasScreen> {
                               });
                             },
                             selectedItems: _selectedPenulis),
-                        15.height,
-                        CustomDropdownMultipleSearch(
-                            label: "Narasumber *",
-                            options: optionsNarsum,
-                            validator: (items) {
-                              if (items == null || items.isEmpty) {
-                                return "Narasumber wajib diisi minimal 1";
-                              }
-                              return null;
-                            },
-                            onChanged: (data) {
-                              setState(() {
-                                _selectedNarasumer = data;
-                              });
-                            },
-                            selectedItems: _selectedNarasumer),
-                        15.height,
-                        CustomDropdownMultipleSearch(
-                            label: "Penerbit *",
-                            validator: (items) {
-                              if (items == null || items.isEmpty) {
-                                return "Penerbit wajib diisi minimal 1";
-                              }
-                              return null;
-                            },
-                            options: optionsPenerbit,
-                            onChanged: (data) {
-                              setState(() {
-                                _selectedPenerbit = data;
-                              });
-                            },
-                            selectedItems: _selectedPenerbit),
                         15.height,
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -595,14 +351,12 @@ class _TugasScreenState extends State<TugasScreen> {
                           ),
                         ),
                         15.height,
-
                         const text.Text(
                           "UPLOAD DOKUMEN",
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         15.height,
-
                         UploadButtonWidget(
                           label: 'File Gambar *',
                           allowedExtensions: const ['jpg', 'png', 'jpeg'],
@@ -612,26 +366,15 @@ class _TugasScreenState extends State<TugasScreen> {
                         ),
                         15.height,
                         UploadButtonWidget(
-                          label: 'File Audit Program',
-                          allowedExtensions: const ['pdf', 'docx'],
+                          label: 'File Dokumen',
+                          allowedExtensions: const [
+                            'pdf',
+                            'jpeg',
+                            'jpg',
+                            'png'
+                          ],
                           onChanged: (file) {
                             docs.add(FileData(urutan: 1, file: file));
-                          },
-                        ),
-                        15.height,
-                        UploadButtonWidget(
-                          label: 'File Kertas Kerja Utama',
-                          allowedExtensions: const ['pdf'],
-                          onChanged: (file) {
-                            docs.add(FileData(urutan: 2, file: file));
-                          },
-                        ),
-                        15.height,
-                        UploadButtonWidget(
-                          label: 'Dokumen Lainnya',
-                          allowedExtensions: const ['pdf'],
-                          onChanged: (file) {
-                            docs.add(FileData(urutan: 3, file: file));
                           },
                         ),
                         15.height,
@@ -832,9 +575,9 @@ class _TugasScreenState extends State<TugasScreen> {
         15.height,
         FastAutocomplete<String>(
           name: 'hastag',
-          validator: ValidationBuilder(locale: locale).build(),
           labelText: 'Hastag',
           options: hashtag,
+          validator: ValidationBuilder(locale: locale).build(),
           initialValue:
               TextEditingValue(text: hastagSelected[windex_hastag - 1]),
           onChanged: (value) {
@@ -851,7 +594,4 @@ class _TugasScreenState extends State<TugasScreen> {
       ],
     );
   }
-
-  int windex_document = -1;
-  var documentSelected = <File>[];
 }

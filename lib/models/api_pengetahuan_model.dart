@@ -32,6 +32,8 @@ class PengetahuanModel {
             json["results"].map((x) => PengetahuanResult.fromJson(x))),
       );
 
+  List<PengetahuanResult>? get results => null;
+
   Map<String, dynamic> toJson() => {
         "count": count,
         "links": links.toJson(),

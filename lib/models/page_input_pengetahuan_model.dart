@@ -11,9 +11,10 @@ import 'package:kms_bpkp_mobile/models/api_tenaga_ahli_model.dart';
 
 class PageInputPengetahuanModel {
   SubJenisPengetahuanModel subJenisPengetahuanModel;
-  ReferensiModel referensiModel;
+  ReferensiModel? referensiModel;
   TenagaAhliModel tenagaAhliModel;
   PedomanModel pedomanModel;
+  PengetahuanModel pengetahuanModel;
   PenulisModel penulisModel;
   PengarangModel pengarangModel;
   PenerbitModel penerbitModel;
@@ -21,7 +22,8 @@ class PageInputPengetahuanModel {
   LingkupPengetahuanModel lingkupPengetahuanModel;
   PageInputPengetahuanModel(
       {required this.subJenisPengetahuanModel,
-      required this.referensiModel,
+      this.referensiModel,
+      required this.pengetahuanModel,
       required this.tenagaAhliModel,
       required this.pedomanModel,
       required this.penulisModel,

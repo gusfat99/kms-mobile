@@ -13,6 +13,7 @@ import 'package:kms_bpkp_mobile/helpers/text_field_widget.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
 import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penerbit_model.dart';
+import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
@@ -56,7 +57,7 @@ class _ResensiKnowlegeScreenState extends State<ResensiKnowlegeScreen> {
   List<Widget> hashtagWidgets = <Widget>[];
   List<Widget> documentWidgets2 = <Widget>[];
   List<SubJenisPengetahuanResult> subJenisPengetahuan = [];
-  List<ReferensiResult> referensiResult = [];
+  List<PengetahuanResult> referensiResult = [];
   List<PenerbitResult> penerbitResult = [];
   List<PenulisResult> penulisResult = [];
   List<HashTagResult> hashtagResult = [];
@@ -153,7 +154,7 @@ class _ResensiKnowlegeScreenState extends State<ResensiKnowlegeScreen> {
           },
           "judul": _judul,
           "ringkasan": _ringkasan,
-          "referensi": _selectedReferensi
+          "referensi_pengetahuan": _selectedReferensi
               .map((x) => ({"id": x.value.toString()}))
               .toList(),
           "narasumber":
@@ -216,9 +217,10 @@ class _ResensiKnowlegeScreenState extends State<ResensiKnowlegeScreen> {
             //REFERENSI
             referensi.clear();
             referensi.add("");
-            referensiResult = snapshot.data!.referensiModel.results;
+            referensiResult =
+                snapshot.data!.pengetahuanModel.pengetahuanResults;
             for (var i = 0; i < referensiResult.length; i++) {
-              referensi.add(referensiResult[i].referensi);
+              referensi.add(referensiResult[i].judul);
             }
 
             //PENULIS
@@ -245,7 +247,7 @@ class _ResensiKnowlegeScreenState extends State<ResensiKnowlegeScreen> {
             tenagaAhliResult = snapshot.data!.tenagaAhliModel.results;
 
             List<OptionsModel> optionsReferensi = referensiResult
-                .map((ref) => OptionsModel(label: ref.referensi, value: ref.id))
+                .map((ref) => OptionsModel(label: ref.judul, value: ref.id))
                 .toList();
             List<OptionsModel> optionsPenerbit = penerbitResult
                 .map((ref) =>

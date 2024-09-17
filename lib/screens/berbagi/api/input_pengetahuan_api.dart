@@ -25,13 +25,21 @@ class InputPengetahuanService implements InputPengetahuanApiService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     Map<String, String> apiParam = {};
+    Map<String, String> apiParamPenulis = {"\$is_disable_pagination": "true"};
+    Map<String, String> apiParamPengetahuan = {
+      "\$is_disable_pagination": "true"
+    };
     //SUB JENIS PENGETAHUAN
     var resultSubJenisPengetahuan = await handleResponse(
         await getRequest(pengetahuanSubJenisEp, apiParam, token!));
 
-    //REFERENSI
+    //REFERENSI ORIGINAL
     var resultReferensi =
         await handleResponse(await getRequest(referensiEp, apiParam, token));
+    
+    // Referensi EP pengetahuan
+    var resultPengetahuan = await handleResponse(
+        await getRequest(pengetahuanEp, apiParamPengetahuan, token));
     
     //TENAGA AHLI
     var resultTenagaAhli =
@@ -43,7 +51,8 @@ class InputPengetahuanService implements InputPengetahuanApiService {
    
     //PENULIS
     var resultPenulis =
-        await handleResponse(await getRequest(penulisEp, apiParam, token));
+        await handleResponse(
+        await getRequest(penulisEp, apiParamPenulis, token));
   
     //PENGARANG
     var resultPengarang =
@@ -65,6 +74,7 @@ class InputPengetahuanService implements InputPengetahuanApiService {
         subJenisPengetahuanModel:
             SubJenisPengetahuanModel.fromJson(resultSubJenisPengetahuan),
         referensiModel: ReferensiModel.fromJson(resultReferensi),
+        pengetahuanModel: PengetahuanModel.fromJson(resultPengetahuan),
         tenagaAhliModel: TenagaAhliModel.fromJson(resultTenagaAhli),
         pedomanModel: PedomanModel.fromJson(resultPedoman),
         penulisModel: PenulisModel.fromJson(resultPenulis),

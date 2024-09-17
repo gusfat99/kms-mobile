@@ -6,6 +6,7 @@ import 'package:kms_bpkp_mobile/models/api_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/page_berbagi_model.dart';
 import 'package:kms_bpkp_mobile/routes.dart';
+import 'package:kms_bpkp_mobile/screens/berbagi/add/general_pengetahuan_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/kapitalis_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/kiat_screen.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/add/resensi_screen.dart';
@@ -119,45 +120,20 @@ class _BerbagiScreenState extends State<BerbagiScreen> {
                             .launch(context);
 
                         break;
-                      case "5": //Aksi Perubahan
-                        // PerubahanScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
-                        break;
+                      case "5": //Aksi Perubahan (sama dengan Karya tulis form nya)
                       case "6": //PKS (Pelatihan Kantor Sendiri)
-                        // PksScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
-                        break;
                       case "7": //Karya Tulis
-                        // KaryaTulisScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
-                        break;
-                      case "8": //Newsletter LC
-                        // NewsLaterScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
-                        break;
+                      case "8": //Library Cafe (sama dengan karya tulus formnya)
                       case "9": //Lainnya
-                        // LainnyaScreen(
-                        //         title: _jenis_pengetahuan,
-                        //         id_jenis: id_jenis,
-                        //         sub_jenis_pengethuan: subpengetahuan[i].nama,
-                        //         id_sub_jenis_pengetahuan: subpengetahuan[i].id)
-                        //     .launch(context);
+                      case "51": //Inovasi
+                      case "54": //Kajian
+                      case "55": //Pedoman
+                        GeneralKnowlegeScreen(
+                                title: _jenis_pengetahuan,
+                                id_jenis: id_jenis,
+                                sub_jenis_pengethuan: subpengetahuan[i].nama,
+                                id_sub_jenis_pengetahuan: subpengetahuan[i].id)
+                            .launch(context);
                         break;
                     }
                   }),
@@ -318,7 +294,7 @@ class CustomDialog extends StatelessWidget {
                 offset: Offset(0.0, 10.0)),
           ],
         ),
-        width: MediaQuery.of(context).size.width,
+        // width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -340,10 +316,13 @@ class CustomDialog extends StatelessWidget {
                   style: secondaryTextStyle()),
             ),
             //16.height,
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(children: subJenisList),
-            ),
+            Expanded(
+                child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(children: subJenisList),
+              ),
+            )),
             16.height,
           ],
         ),

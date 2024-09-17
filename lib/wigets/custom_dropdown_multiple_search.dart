@@ -32,7 +32,7 @@ class CustomDropdownMultipleSearch extends StatelessWidget {
           items: options,
           dropdownBuilder: customDropdownMultiSelect,
           onChanged: onChanged,
-          // validator: ,
+          itemAsString: (option) => option.label,
           validator: validator,
           compareFn: (item, selectedItem) => item.value == selectedItem.value,
           popupProps: const PopupPropsMultiSelection.modalBottomSheet(

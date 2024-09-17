@@ -12,6 +12,7 @@ import 'package:kms_bpkp_mobile/helpers/my_validation_locale.dart';
 import 'package:kms_bpkp_mobile/helpers/text_field_widget.dart';
 import 'package:kms_bpkp_mobile/models/api_hashtag_model.dart';
 import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
+import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
@@ -46,7 +47,7 @@ class _KiatScreenState extends State<KiatScreen> {
   List<Widget> hashtagWidgets = <Widget>[];
   List<Widget> documentWidgets2 = <Widget>[];
   List<SubJenisPengetahuanResult> subJenisPengetahuan = [];
-  List<ReferensiResult> referensiResult = [];
+  List<PengetahuanResult> referensiResult = [];
   List<PenulisResult> penulisResult = [];
   List<HashTagResult> hashtagResult = [];
   List<String> subJenis = <String>[];
@@ -108,7 +109,7 @@ class _KiatScreenState extends State<KiatScreen> {
         var refName = referensiSelected[i];
         var refId = 0;
         for (var element in referensiResult) {
-          if (element.referensi == refName) {
+          if (element.judul == refName) {
             refId = element.id;
             referensi_send.add({"id": refId});
           }
@@ -188,7 +189,7 @@ class _KiatScreenState extends State<KiatScreen> {
           },
           "judul": _judul,
           // "ringkasan": ringkasan,
-          "referensi": referensi_send,
+          "referensi_pengetahuan": referensi_send,
           "masalah": _masalah,
           "dampak": _dampak,
           "penyebab": _penyebab,
@@ -236,9 +237,10 @@ class _KiatScreenState extends State<KiatScreen> {
             //REFERENSI
             referensi.clear();
             referensi.add("");
-            referensiResult = snapshot.data!.referensiModel.results;
+            referensiResult =
+                snapshot.data!.pengetahuanModel.pengetahuanResults;
             for (var i = 0; i < referensiResult.length; i++) {
-              referensi.add(referensiResult[i].referensi);
+              referensi.add(referensiResult[i].judul);
             }
             //PENULIS
 
