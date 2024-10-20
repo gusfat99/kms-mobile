@@ -15,7 +15,6 @@ import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
-import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_tenaga_ahli_model.dart';
 import 'package:kms_bpkp_mobile/models/common_model.dart';

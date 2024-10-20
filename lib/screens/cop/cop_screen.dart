@@ -9,7 +9,6 @@ import 'package:kms_bpkp_mobile/screens/cop/api/cop_api.dart';
 import 'package:kms_bpkp_mobile/screens/cop/components/cop_card_item_vertical.dart';
 import 'package:kms_bpkp_mobile/screens/cop/cop_detail_screen.dart';
 import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
-import 'package:kms_bpkp_mobile/screens/pencarian/pencarian_cop_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -56,7 +55,6 @@ class _CopScreenState extends State<CopScreen> {
               categories.add(element.nama);
               categoriesIds.add(element.id);
             }
-            User user = snapshot.data!.user;
             return Scaffold(
                 appBar: buildAppBar(),
                 floatingActionButton: FloatingActionButton(
@@ -156,16 +154,6 @@ class _CopScreenState extends State<CopScreen> {
                   ),
                 ),
               ).expand(),
-              // Container(
-              //   margin: const EdgeInsets.only(top: 0),
-              //   child: IconBtnWithCounter(
-              //     svgSrc: "assets/icons/bell.svg",
-              //     numOfitem: "10", //notifCounter,
-              //     press: () {
-              //       Navigator.pushNamed(context, notificationRoute);
-              //     },
-              //   ),
-              // ),
             ],
           ),
           10.height,

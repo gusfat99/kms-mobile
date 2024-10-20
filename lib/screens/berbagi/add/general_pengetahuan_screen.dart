@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:flutter/src/widgets/text.dart' as text;
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
 import 'package:form_validator/form_validator.dart';
@@ -63,7 +64,7 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
   List<String> subJenis = <String>[];
   List<String> referensi = <String>[];
   List<String> penulis = <String>[];
-  List<String> hashtag = <String>[];
+  List<String> hashtagOptions = <String>[];
   List<File> document = <File>[];
   List<LingkupPengetahuanResult> lingkupPengetahuanResult = [];
   List<TenagaAhliResult> tenagaAhliResult = [];
@@ -165,8 +166,7 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
           i++;
         }
 
-        var submitPengetahuan =
-            await InputPengetahuanService().submitNewKnowledge(req);
+        await InputPengetahuanService().submitNewKnowledge(req);
 
         toasty(context, "SUCCESS!");
         finish(context);
@@ -211,11 +211,11 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
             }
 
             //HASHTAG
-            hashtag.clear();
-            hashtag.add("");
+            hashtagOptions.clear();
+            hashtagOptions.add("");
             hashtagResult = snapshot.data!.hashTagModel.results;
             for (var i = 0; i < hashtagResult.length; i++) {
-              hashtag.add(hashtagResult[i].nama);
+              hashtagOptions.add(hashtagResult[i].nama);
             }
             lingkupPengetahuanResult =
                 snapshot.data!.lingkupPengetahuanModel.results;
@@ -576,7 +576,7 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
         FastAutocomplete<String>(
           name: 'hastag',
           labelText: 'Hastag',
-          options: hashtag,
+          options: hashtagOptions,
           validator: ValidationBuilder(locale: locale).build(),
           initialValue:
               TextEditingValue(text: hastagSelected[windex_hastag - 1]),

@@ -29,6 +29,9 @@ String tenagaAhliEp = "${appBaseUrl}api/v1/orang";
 String pedomanEp = "${appBaseUrl}api/v1/pedoman";
 String pengarangEp = "${appBaseUrl}api/v1/orang";
 String penerbitEp = "${appBaseUrl}api/v1/penerbit";
+String likeEp = "${appBaseUrl}api/v1/like";
+String dislikeEp = "${appBaseUrl}api/v1/dislike";
+String komentarEp = "${appBaseUrl}api/v1/komentar";
 String pengetahuanSubmitReferensi = "${appBaseUrl}api/v1/referensi";
 String pengetahuanSubmitHashTag = "${appBaseUrl}api/v1/tag";
 String pengetahuanSubmitAttachment = "${appBaseUrl}api/v1/attachments";
@@ -112,7 +115,17 @@ class CopApiService {
   }
 
 //SUBMIT
-  Future<Object>? submitNewCOP(Map pParam) {}
+  Future<Object>? submitNewCOP(Map pParam) {
+    return null;
+  }
+
+  Future<Object>? likePostCop(int forumId) {
+    return null;
+  }
+
+  Future<Object>? dislikePostCop(int forumId) {
+    return null;
+  }
 }
 
 class InputPengetahuanApiService {
@@ -145,6 +158,4 @@ class InputPengetahuanApiService {
   Future<Object>? submitNewKnowledge(Map pParam) {
     return null;
   }
-
-
 }
