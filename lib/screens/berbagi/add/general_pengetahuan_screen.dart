@@ -70,6 +70,7 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
   List<TenagaAhliResult> tenagaAhliResult = [];
   List<OptionsModel> _selectedReferensi = [];
   List<OptionsModel> _selectedPenulis = [];
+  bool isLoadingSubmit = false;
 
   List<FileData> docs = [];
 
@@ -105,7 +106,9 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
     if (_formKey.currentState!.validate()) {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
-
+      setState(() {
+        isLoadingSubmit = true;
+      });
       //HASHTAG
       var hashtag_send = [];
       List<String> hashtag_send_api = [];
@@ -167,12 +170,17 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
         }
 
         await InputPengetahuanService().submitNewKnowledge(req);
-
+        setState(() {
+          isLoadingSubmit = false;
+        });
         toasty(context, "SUCCESS!");
         finish(context);
       } catch (e) {
         print(e);
         toasty(context, "${e.toString()}");
+        setState(() {
+          isLoadingSubmit = false;
+        });
       }
     } else {
       toasty(context, "Silahkan periksa form anda!!");
@@ -436,9 +444,11 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
                         ),
                         15.height,
                         ElevatedButton(
-                          onPressed: () async {
-                            handleSubmit();
-                          },
+                          onPressed: isLoadingSubmit
+                              ? null
+                              : () async {
+                                  handleSubmit();
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
@@ -447,19 +457,29 @@ class _GeneralKnowlegeScreenState extends State<GeneralKnowlegeScreen> {
                             ),
                           ),
                           child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.save,
-                                    color: whiteColor, size: 20),
-                                6.width,
-                                const text.Text(
-                                  "SIMPAN",
-                                  style: TextStyle(color: whiteColor),
-                                ),
-                              ],
-                            ),
+                            child: isLoadingSubmit
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.save,
+                                          color: whiteColor, size: 20),
+                                      6.width,
+                                      const text.Text(
+                                        "SIMPAN",
+                                        style: TextStyle(color: whiteColor),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         50.height

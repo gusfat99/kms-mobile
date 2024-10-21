@@ -15,7 +15,6 @@ import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
-import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/page_input_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
@@ -56,6 +55,7 @@ class _KiatScreenState extends State<KiatScreen> {
   List<String> hashtag = <String>[];
   List<File> document = <File>[];
   List<LingkupPengetahuanResult> lingkupPengetahuanResult = [];
+  bool isLoadingSubmit = false;
 
   String file_gambar = "Pilih Gambar";
   List<String> file_dokumen = [];
@@ -101,7 +101,9 @@ class _KiatScreenState extends State<KiatScreen> {
     if (_formKey.currentState!.validate()) {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
-
+      setState(() {
+        isLoadingSubmit = true;
+      });
       //REFERENSI
       List<Map<dynamic, dynamic>> referensi_send = [];
       List<String> referensi_send_api = [];
@@ -203,18 +205,23 @@ class _KiatScreenState extends State<KiatScreen> {
           "kompetensi": {}
         };
 
-        var submitPengetahuan =
-            await InputPengetahuanService().submitNewKnowledge(req);
+        await InputPengetahuanService().submitNewKnowledge(req);
 
         // print(submitPengetahuan);
         toasty(context, "SUCCESS!");
         finish(context);
+        setState(() {
+          isLoadingSubmit = false;
+        });
       } catch (e) {
         print(e);
         toasty(context, "error!! ${e.toString()}");
+        setState(() {
+          isLoadingSubmit = false;
+        });
       }
     } else {
-      toasty(context, "1 : " + "validate!!");
+      toasty(context, "Silahkan periksa form anda!");
     }
   }
 
@@ -521,9 +528,11 @@ class _KiatScreenState extends State<KiatScreen> {
                         ),
                         15.height,
                         ElevatedButton(
-                          onPressed: () async {
-                            handleSubmit();
-                          },
+                          onPressed: isLoadingSubmit
+                              ? null
+                              : () async {
+                                  handleSubmit();
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
@@ -532,19 +541,29 @@ class _KiatScreenState extends State<KiatScreen> {
                             ),
                           ),
                           child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.save,
-                                    color: whiteColor, size: 20),
-                                6.width,
-                                const text.Text(
-                                  "SIMPAN",
-                                  style: TextStyle(color: whiteColor),
-                                ),
-                              ],
-                            ),
+                            child: isLoadingSubmit
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.save,
+                                          color: whiteColor, size: 20),
+                                      6.width,
+                                      const text.Text(
+                                        "SIMPAN",
+                                        style: TextStyle(color: whiteColor),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         50.height

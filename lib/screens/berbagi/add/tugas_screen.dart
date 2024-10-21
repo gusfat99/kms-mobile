@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/text.dart' as text;
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
@@ -16,7 +15,7 @@ import 'package:kms_bpkp_mobile/models/api_lingkup_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_penulis_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
-import 'package:kms_bpkp_mobile/models/api_referensi_model.dart';
+
 import 'package:kms_bpkp_mobile/models/api_sub_jenis_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_tenaga_ahli_model.dart';
 import 'package:kms_bpkp_mobile/models/common_model.dart';
@@ -25,9 +24,7 @@ import 'package:kms_bpkp_mobile/screens/berbagi/api/input_pengetahuan_api.dart';
 import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:kms_bpkp_mobile/utils.dart';
-import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multi_select.dart';
 import 'package:kms_bpkp_mobile/wigets/custom_dropdown_multiple_search.dart';
-import 'package:kms_bpkp_mobile/wigets/custom_popup_item_select.dart';
 import 'package:kms_bpkp_mobile/wigets/upload_button_widget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -77,6 +74,7 @@ class _TugasScreenState extends State<TugasScreen> {
   List<OptionsModel> _selectedNarasumer = [];
   List<OptionsModel> _selectedPenerbit = [];
   List<FileData> docs = [];
+  bool isLoadingSubmit = false;
 
   String file_gambar = "Pilih Gambar";
   List<String> file_dokumen = [];
@@ -123,7 +121,9 @@ class _TugasScreenState extends State<TugasScreen> {
     if (_formKey.currentState!.validate()) {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
-
+      setState(() {
+        isLoadingSubmit = true;
+      });
       //HASHTAG
       var hashtag_send = [];
       List<String> hashtag_send_api = [];
@@ -199,14 +199,19 @@ class _TugasScreenState extends State<TugasScreen> {
           i++;
         }
 
-        var submitPengetahuan =
-            await InputPengetahuanService().submitNewKnowledge(req);
+        await InputPengetahuanService().submitNewKnowledge(req);
 
         toasty(context, "SUCCESS!");
         finish(context);
+        setState(() {
+          isLoadingSubmit = false;
+        });
       } catch (e) {
         print(e);
         toasty(context, "error!! ${e.toString()}");
+        setState(() {
+          isLoadingSubmit = false;
+        });
       }
     } else {
       toasty(context, "Silahkan Periksa Form anda!");
@@ -693,9 +698,11 @@ class _TugasScreenState extends State<TugasScreen> {
                         ),
                         15.height,
                         ElevatedButton(
-                          onPressed: () async {
-                            handleSubmit();
-                          },
+                          onPressed: isLoadingSubmit
+                              ? null
+                              : () async {
+                                  handleSubmit();
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
@@ -704,19 +711,29 @@ class _TugasScreenState extends State<TugasScreen> {
                             ),
                           ),
                           child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.save,
-                                    color: whiteColor, size: 20),
-                                6.width,
-                                const text.Text(
-                                  "SIMPAN",
-                                  style: TextStyle(color: whiteColor),
-                                ),
-                              ],
-                            ),
+                            child: isLoadingSubmit
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.save,
+                                          color: whiteColor, size: 20),
+                                      6.width,
+                                      const text.Text(
+                                        "SIMPAN",
+                                        style: TextStyle(color: whiteColor),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         50.height

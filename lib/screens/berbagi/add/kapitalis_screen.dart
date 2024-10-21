@@ -68,6 +68,7 @@ class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
   List<TenagaAhliResult> tenagaAhliResult = [];
   List<OptionsModel> _selectedReferensi = [];
   List<OptionsModel> _selectedPenulis = [];
+  bool isLoadingSubmit = false;
 
   List<FileData> docs = [];
 
@@ -109,7 +110,9 @@ class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
     if (_formKey.currentState!.validate()) {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
-
+      setState(() {
+        isLoadingSubmit = true;
+      });
       //HASHTAG
       var hashtag_send = [];
       List<String> hashtag_send_api = [];
@@ -178,12 +181,17 @@ class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
           i++;
         }
 
-        var submitPengetahuan =
-            await InputPengetahuanService().submitNewKnowledge(req);
+        await InputPengetahuanService().submitNewKnowledge(req);
 
         toasty(context, "SUCCESS!");
         finish(context);
+        setState(() {
+          isLoadingSubmit = false;
+        });
       } catch (e) {
+        setState(() {
+          isLoadingSubmit = false;
+        });
         print(e);
         toasty(context, "${e.toString()}");
       }
@@ -535,9 +543,11 @@ class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
                         ),
                         15.height,
                         ElevatedButton(
-                          onPressed: () async {
-                            handleSubmit();
-                          },
+                          onPressed: isLoadingSubmit
+                              ? null
+                              : () async {
+                                  handleSubmit();
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
@@ -546,19 +556,29 @@ class _KapitalisKnowlegeScreenState extends State<KapitalisKnowlegeScreen> {
                             ),
                           ),
                           child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.save,
-                                    color: whiteColor, size: 20),
-                                6.width,
-                                const text.Text(
-                                  "SIMPAN",
-                                  style: TextStyle(color: whiteColor),
-                                ),
-                              ],
-                            ),
+                            child: isLoadingSubmit
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.save,
+                                          color: whiteColor, size: 20),
+                                      6.width,
+                                      const text.Text(
+                                        "SIMPAN",
+                                        style: TextStyle(color: whiteColor),
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         50.height
