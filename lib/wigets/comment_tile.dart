@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kms_bpkp_mobile/helpers/date_converter.dart';
+import 'package:kms_bpkp_mobile/models/api_feedback_model.dart';
 
 // Widget untuk menampilkan tile komentar
-Widget commentTile(Map<String, dynamic> comment) {
+Widget commentTile(FeedbackModelResult comment) {
+  String? photoUrl = comment.user.foto.url;
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Column(
@@ -11,55 +14,40 @@ Widget commentTile(Map<String, dynamic> comment) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-              child: Icon(Icons.person),
+              backgroundImage: (photoUrl != null && photoUrl.isNotEmpty)
+                  ? NetworkImage(photoUrl) // Jika ada URL foto
+                  : null, // Jika tidak ada, tampilkan child
+              child: (photoUrl == null || photoUrl.isEmpty)
+                  ? const Icon(
+                      Icons.person) // Jika tidak ada foto, gunakan Icon default
+                  : null, // Jika ada foto, child dihilangkan
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(comment['username'],
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(comment['timestamp'],
-                      style: TextStyle(color: Colors.grey)),
-                  SizedBox(height: 5),
-                  Text(comment['comment']),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.thumb_up),
-                        onPressed: () {},
-                      ),
-                      Text("${comment['likes']}"),
-                      SizedBox(width: 10),
-                      IconButton(
-                        icon: Icon(Icons.thumb_down),
-                        onPressed: () {},
-                      ),
-                      Text("${comment['dislikes']}"),
-                      SizedBox(width: 20),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text("Reply"),
-                      ),
-                    ],
-                  ),
+                  Text(comment.user.namaLengkap,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(timeAgoOrDate(DateTime.parse(comment.createdAt)),
+                      style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 5),
+                  Text(comment.komentar ?? ''),
                 ],
               ),
             ),
           ],
         ),
-        if (comment['replies'].isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(left: 40.0),
-            child: Column(
-              children: List.generate(comment['replies'].length, (index) {
-                final reply = comment['replies'][index];
-                return replyTile(reply);
-              }),
-            ),
-          ),
+        // if (comment['replies'].isNotEmpty)
+        //   Padding(
+        //     padding: const EdgeInsets.only(left: 40.0),
+        //     child: Column(
+        //       children: List.generate(comment['replies'].length, (index) {
+        //         final reply = comment['replies'][index];
+        //         return replyTile(reply);
+        //       }),
+        //     ),
+        //   ),
       ],
     ),
   );

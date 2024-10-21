@@ -3,7 +3,6 @@ import 'package:kms_bpkp_mobile/colors.dart';
 import 'package:kms_bpkp_mobile/helpers/widgets.dart';
 import 'package:kms_bpkp_mobile/models/api_cop_kategori.dart';
 import 'package:kms_bpkp_mobile/models/api_cop_model.dart';
-import 'package:kms_bpkp_mobile/models/api_token_model.dart';
 import 'package:kms_bpkp_mobile/models/page_cop_model.dart';
 import 'package:kms_bpkp_mobile/screens/cop/api/cop_api.dart';
 import 'package:kms_bpkp_mobile/screens/cop/components/cop_card_item_vertical.dart';

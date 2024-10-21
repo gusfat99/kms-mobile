@@ -32,6 +32,7 @@ class CopAddScreen extends StatefulWidget {
 
 class _CopAddScreenState extends State<CopAddScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool isLoadingSubmit = false;
   List<Widget> hashtagWidgets = <Widget>[];
   List<Widget> documentWidgets2 = <Widget>[];
 
@@ -121,6 +122,9 @@ class _CopAddScreenState extends State<CopAddScreen> {
     if (_formKey.currentState!.validate()) {
       //_formKey.currentState!.save();
       AppUtils.hideKeyboard(context);
+      setState(() {
+        isLoadingSubmit = true;
+      });
       try {
         //HASHTAG
         var hashtagSend = [];
@@ -176,6 +180,7 @@ class _CopAddScreenState extends State<CopAddScreen> {
           hashtagSend = collectHastagId;
           fileGambarId = valueGambar![0].id;
           fileDokumenId = docIdCollected;
+          isLoadingSubmit = false;
         });
         //SUBMIT ALL
         //SEND FORM
@@ -202,6 +207,9 @@ class _CopAddScreenState extends State<CopAddScreen> {
         });
       } catch (e) {
         toasty(context, "${e.toString()}");
+        setState(() {
+          isLoadingSubmit = false;
+        });
       }
     } else {
       toasty(context, "1 : Silahkan periksa form anda!!");
@@ -491,11 +499,13 @@ class _CopAddScreenState extends State<CopAddScreen> {
                         ),
                         15.height,
                         ElevatedButton(
-                          onPressed: () async {
-                            //SUBMIT
+                          onPressed: isLoadingSubmit
+                              ? null
+                              : () async {
+                                  //SUBMIT
 
-                            handleSubmit();
-                          },
+                                  handleSubmit();
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mainColor,
                             shadowColor: Colors.transparent.withOpacity(0),
@@ -504,21 +514,32 @@ class _CopAddScreenState extends State<CopAddScreen> {
                             ),
                           ),
                           child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.save,
-                                    color: whiteColor, size: 20),
-                                6.width,
-                                text(
-                                  "SIMPAN",
-                                  textColor: whiteColor,
-                                  style: const TextStyle(color: Colors.white),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ],
-                            ),
+                            child: isLoadingSubmit
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.save,
+                                          color: whiteColor, size: 20),
+                                      6.width,
+                                      text(
+                                        "SIMPAN",
+                                        textColor: whiteColor,
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
                           ),
                         ),
                         50.height

@@ -126,4 +126,15 @@ class CopService implements CopApiService {
         await postRequest('$copSubmit/$forumId/dislike', {}, token!));
     return submitResult;
   }
+
+  @override
+  Future<FeedbackModelResult>? commentPostCop(Map pParam) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+    var response =
+        await handleResponse(await postRequest(komentarEp, pParam, token!));
+    FeedbackModelResult result = FeedbackModelResult.fromJson(response);
+
+    return result;
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:kms_bpkp_mobile/app.dart';
 import 'package:kms_bpkp_mobile/models/api_cop_model.dart';
+import 'package:kms_bpkp_mobile/models/api_feedback_model.dart';
 import 'package:kms_bpkp_mobile/models/api_pengetahuan_model.dart';
 import 'package:kms_bpkp_mobile/models/api_post_attachment_model.dart';
 import 'package:kms_bpkp_mobile/models/api_token_model.dart';
@@ -124,6 +125,10 @@ class CopApiService {
   }
 
   Future<Object>? dislikePostCop(int forumId) {
+    return null;
+  }
+
+  Future<FeedbackModelResult>? commentPostCop(Map pParam) {
     return null;
   }
 }

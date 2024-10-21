@@ -368,3 +368,24 @@ String convertDateInfo(String tgl) {
   }
   return day + ',${dateTime.day} ' + month + ' ${dateTime.year}';
 }
+
+String timeAgoOrDate(DateTime date) {
+  final now = DateTime.now();
+  final difference = now.difference(date);
+
+  if (difference.inDays >= 30) {
+    // Jika lebih dari 1 bulan, tampilkan format tanggal
+    return DateFormat('dd/MM/yyyy HH:mm').format(date);
+  } else if (difference.inDays >= 7) {
+    final weeks = (difference.inDays / 7).floor();
+    return '$weeks minggu yang lalu';
+  } else if (difference.inDays >= 1) {
+    return '${difference.inDays} hari yang lalu';
+  } else if (difference.inHours >= 1) {
+    return '${difference.inHours} jam yang lalu';
+  } else if (difference.inMinutes >= 1) {
+    return '${difference.inMinutes} menit yang lalu';
+  } else {
+    return 'baru saja';
+  }
+}

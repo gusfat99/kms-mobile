@@ -92,7 +92,7 @@ class FeedbackModelResult {
 }
 
 class ParentKomentar {
-  int id;
+  int? id;
   String? komentar;
   String? status;
 
