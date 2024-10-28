@@ -50,6 +50,7 @@ class FeedbackModelResult {
   UserFeedback user;
   String? komentar;
   ParentKomentar? parentKomentar;
+  dynamic status;
 
   FeedbackModelResult(
       {required this.createdAt,
@@ -60,6 +61,7 @@ class FeedbackModelResult {
       required this.pengetahuan,
       required this.updatedAt,
       required this.user,
+      this.status,
       this.komentar,
       this.parentKomentar});
   factory FeedbackModelResult.fromJson(Map<String, dynamic> json) =>
@@ -152,26 +154,26 @@ class UserFeedback {
   String email;
   Foto foto;
   int id;
-  String jabatan;
+  String? jabatan;
   String namaLengkap;
   String namaPanggilan;
-  String nip;
+  String? nip;
   String? statusLevel;
   String? unitKerja;
-  String userLevel;
+  String? userLevel;
   String username;
 
   UserFeedback({
     required this.email,
     required this.foto,
     required this.id,
-    required this.jabatan,
+    this.jabatan,
     required this.namaLengkap,
     required this.namaPanggilan,
-    required this.nip,
+    this.nip,
     this.statusLevel,
     this.unitKerja,
-    required this.userLevel,
+    this.userLevel,
     required this.username,
   });
 

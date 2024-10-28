@@ -8,7 +8,6 @@ import 'package:kms_bpkp_mobile/screens/error/error_screen.dart';
 import 'package:kms_bpkp_mobile/screens/knowledge/api/knowledge_api.dart';
 import 'package:kms_bpkp_mobile/screens/knowledge/components/knowledge_card_item_vertical.dart';
 import 'package:kms_bpkp_mobile/screens/knowledge/knowledge_center_screen.dart';
-import 'package:kms_bpkp_mobile/screens/pencarian/pencarian_screen.dart';
 import 'package:kms_bpkp_mobile/size.dart';
 import 'package:nb_utils/nb_utils.dart';
 

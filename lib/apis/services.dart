@@ -73,6 +73,16 @@ class KnowledgeApiService {
     return null;
   }
 
+  //PENGETAHUAN BYID
+  Future<PengetahuanModel>? getPengetahuanById(int id) {
+    return null;
+  }
+
+  //PENGETAHUAN DETAIL
+  Future<PageKnowledgeDetailModel>? getPengetahuanDetail(int id) {
+    return null;
+  }
+
   //PENGETAHUAN BY JENIS
   Future<PengetahuanModel>? getPengetahuanByJenis(String jenisPengetahuan) {
     return null;
@@ -80,6 +90,15 @@ class KnowledgeApiService {
 
   //JENIS PENGETAHUAN
   Future<PageBerbagiModel>? getJenisPengetahuan() {
+    return null;
+  }
+
+  //LIKE, DISLIKE CONTENT PENGETAHUAN
+  Future<Object>? likePostPengetahuan(int id) {
+    return null;
+  }
+
+  Future<Object>? dislikePostPengetahuan(int id) {
     return null;
   }
 }

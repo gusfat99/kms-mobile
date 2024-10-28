@@ -136,6 +136,7 @@ class PengetahuanResult {
   String tujuan;
   String updatedAt;
   TedBy updatedBy;
+  List<Dokumen>? dokumen;
 
   PengetahuanResult({
     required this.createdAt,
@@ -153,6 +154,7 @@ class PengetahuanResult {
     required this.kesimpulanRekomendasi,
     required this.latarBelakang,
     required this.lessonLearned,
+    this.dokumen,
     required this.lingkupPengetahuan,
     required this.masalah,
     required this.metodePengawasan,
@@ -182,47 +184,52 @@ class PengetahuanResult {
 
   factory PengetahuanResult.fromJson(Map<String, dynamic> json) =>
       PengetahuanResult(
-        createdAt: json["created_at"] ?? "",
-        createdBy: TedBy.fromJson(json["created_by"]),
-        dampak: json["dampak"] ?? "",
-        dasarHukum: json["dasar_hukum"] ?? "",
-        dataDigunakan: json["data_digunakan"] ?? "",
-        deletedBy: TedBy.fromJson(json["deleted_by"]),
-        hipotesis: json["hipotesis"] ?? "",
-        id: json["id"] ?? 0,
-        jenisPengetahuan: Pengetahuan.fromJson(json["jenis_pengetahuan"]),
-        judul: json["judul"] ?? "",
-        jumlahHalaman: json["jumlah_halaman"] ?? 0,
-        keahlianDibutuhkan: json["keahlian_dibutuhkan"] ?? "",
-        kesimpulanRekomendasi: json["kesimpulan_rekomendasi"] ?? "",
-        latarBelakang: json["latar_belakang"] ?? "",
-        lessonLearned: json["lesson_learned"] ?? "",
-        lingkupPengetahuan: Pengetahuan.fromJson(json["lingkup_pengetahuan"]),
-        masalah: json["masalah"] ?? "",
-        metodePengawasan: json["metode_pengawasan"] ?? "",
-        pembahasan: json["pembahasan"] ?? "",
-        penelitianTerdahulu: json["penelitian_terdahulu"] ?? "",
-        pengujian: json["pengujian"] ?? "",
-        penulis1: Penulis.fromJson(json["penulis_1"]),
-        penulis2: Penulis.fromJson(json["penulis_2"]),
-        penulis3: Penulis.fromJson(json["penulis_3"]),
-        penyebab: json["penyebab"] ?? "",
-        prosesBisnis: json["proses_bisnis"] ?? "",
-        ringkasan: json["ringkasan"] ?? "",
-        risikoObjekPengawasan: json["risiko_objek_pengawasan"] ?? "",
-        rumusanMasalah: json["rumusan_masalah"] ?? "",
-        solusi: json["solusi"] ?? "",
-        statistik: Statistik.fromJson(json["statistik"]),
-        statusPengetahuan: Pengetahuan.fromJson(json["status_pengetahuan"]),
-        subjenisPengetahuan: Pengetahuan.fromJson(json["subjenis_pengetahuan"]),
-        syaratHasil: json["syarat_hasil"] ?? "",
-        tahunTerbit: json["tahun_terbit"] ?? 0,
-        temuanMaterial: json["temuan_material"] ?? "",
-        thumbnail: Thumbnail.fromJson(json["thumbnail"]),
-        tujuan: json["tujuan"] ?? "",
-        updatedAt: json["updated_at"] ?? "",
-        updatedBy: TedBy.fromJson(json["updated_by"]),
-      );
+          createdAt: json["created_at"] ?? "",
+          createdBy: TedBy.fromJson(json["created_by"]),
+          dampak: json["dampak"] ?? "",
+          dasarHukum: json["dasar_hukum"] ?? "",
+          dataDigunakan: json["data_digunakan"] ?? "",
+          deletedBy: TedBy.fromJson(json["deleted_by"]),
+          hipotesis: json["hipotesis"] ?? "",
+          id: json["id"] ?? 0,
+          jenisPengetahuan: Pengetahuan.fromJson(json["jenis_pengetahuan"]),
+          judul: json["judul"] ?? "",
+          jumlahHalaman: json["jumlah_halaman"] ?? 0,
+          keahlianDibutuhkan: json["keahlian_dibutuhkan"] ?? "",
+          kesimpulanRekomendasi: json["kesimpulan_rekomendasi"] ?? "",
+          latarBelakang: json["latar_belakang"] ?? "",
+          lessonLearned: json["lesson_learned"] ?? "",
+          lingkupPengetahuan: Pengetahuan.fromJson(json["lingkup_pengetahuan"]),
+          masalah: json["masalah"] ?? "",
+          metodePengawasan: json["metode_pengawasan"] ?? "",
+          pembahasan: json["pembahasan"] ?? "",
+          penelitianTerdahulu: json["penelitian_terdahulu"] ?? "",
+          pengujian: json["pengujian"] ?? "",
+          penulis1: Penulis.fromJson(json["penulis_1"]),
+          penulis2: Penulis.fromJson(json["penulis_2"]),
+          penulis3: Penulis.fromJson(json["penulis_3"]),
+          penyebab: json["penyebab"] ?? "",
+          prosesBisnis: json["proses_bisnis"] ?? "",
+          ringkasan: json["ringkasan"] ?? "",
+          risikoObjekPengawasan: json["risiko_objek_pengawasan"] ?? "",
+          rumusanMasalah: json["rumusan_masalah"] ?? "",
+          solusi: json["solusi"] ?? "",
+          statistik: Statistik.fromJson(json["statistik"]),
+          statusPengetahuan: Pengetahuan.fromJson(json["status_pengetahuan"]),
+          subjenisPengetahuan:
+              Pengetahuan.fromJson(json["subjenis_pengetahuan"]),
+          syaratHasil: json["syarat_hasil"] ?? "",
+          tahunTerbit: json["tahun_terbit"] ?? 0,
+          temuanMaterial: json["temuan_material"] ?? "",
+          thumbnail: Thumbnail.fromJson(json["thumbnail"]),
+          tujuan: json["tujuan"] ?? "",
+          updatedAt: json["updated_at"] ?? "",
+          updatedBy: TedBy.fromJson(json["updated_by"]),
+          dokumen: json['dokumen'] != null
+              ? (json['dokumen'] as List)
+                  .map((item) => Dokumen.fromJson(item))
+                  .toList()
+              : null);
 
   Map<String, dynamic> toJson() => {
         "created_at": createdAt,
@@ -236,8 +243,7 @@ class PengetahuanResult {
         "jenis_pengetahuan": jenisPengetahuan.toJson(),
         "judul": judul,
         "jumlah_halaman": jumlahHalaman,
-        "keahlian_dibutuhkan":
-            keahlianDibutuhkan,
+        "keahlian_dibutuhkan": keahlianDibutuhkan,
         "kesimpulan_rekomendasi": kesimpulanRekomendasi,
         "latar_belakang": latarBelakang,
         "lesson_learned": lessonLearned,
@@ -253,8 +259,7 @@ class PengetahuanResult {
         "penyebab": penyebab,
         "proses_bisnis": prosesBisnis,
         "ringkasan": ringkasan,
-        "risiko_objek_pengawasan":
-            risikoObjekPengawasan,
+        "risiko_objek_pengawasan": risikoObjekPengawasan,
         "rumusan_masalah": rumusanMasalah,
         "solusi": solusi,
         "statistik": statistik.toJson(),
@@ -267,6 +272,7 @@ class PengetahuanResult {
         "tujuan": tujuan,
         "updated_at": updatedAt,
         "updated_by": updatedBy.toJson(),
+        "dokumen": dokumen?.map((item) => item.toJson()).toList(),
       };
 }
 
@@ -411,5 +417,42 @@ class Thumbnail {
         "id": id,
         "nama": nama,
         "url": url,
+      };
+}
+
+class Dokumen {
+  int id;
+  String nama;
+  String url;
+  TedBy createdBy;
+  String createdAt;
+  Pengetahuan pengetahuan;
+  Map<dynamic, dynamic> pengetahuanDokumen;
+  Dokumen(
+      {required this.id,
+      required this.nama,
+      required this.url,
+      required this.createdBy,
+      required this.createdAt,
+      required this.pengetahuan,
+      required this.pengetahuanDokumen});
+
+  factory Dokumen.fromJson(Map<String, dynamic> json) => Dokumen(
+      id: json['id'],
+      nama: json['nama'],
+      url: json['url'],
+      createdBy: TedBy.fromJson(json['created_by']),
+      createdAt: json['created_at'],
+      pengetahuan: Pengetahuan.fromJson(json['pengetahuan']),
+      pengetahuanDokumen: json['pengetahuan_dokumen']);
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "nama": nama,
+        "url": url,
+        "pengetahuan": pengetahuan,
+        "pengetahuan_dokumen": pengetahuanDokumen,
+        "created_at": createdAt,
+        "created_by": createdBy,
       };
 }

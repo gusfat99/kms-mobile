@@ -241,8 +241,7 @@ Future<void> logout(BuildContext context) async {
 class CardButton extends StatelessWidget {
   final JenisPengetahuanResult pengetahuan;
   final int color;
-  const CardButton({Key? key, required this.pengetahuan, required this.color})
-      : super(key: key);
+  const CardButton({super.key, required this.pengetahuan, required this.color});
 
   @override
   Widget build(BuildContext context) {
